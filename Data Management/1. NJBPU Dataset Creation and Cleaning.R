@@ -9,6 +9,7 @@ setwd("~/GitHub/Data-Visualization-Final-Project")
 
 #Import the datasets, one for each program
 #Sourced from December'21 Monthly NJBPU Solar Registration Database
+#At this URL: https://njcleanenergy.com/renewable-energy/project-activity-reports/solar-activity-report-archive
 SRP_Data <- read.csv("~/GitHub/Data-Visualization-Final-Project/Original Data Files/NJBPU_SRP_Data.csv",na.string=c(NA,""," "))
 TI_Data <- read.csv("~/GitHub/Data-Visualization-Final-Project/Original Data Files/NJBPU_TI_Data.csv",na.string=c(NA,""," "))
 ADI_Data <- read.csv("~/GitHub/Data-Visualization-Final-Project/Original Data Files/NJPU_ADI_Data.csv",na.string=c(NA,""," "))
@@ -44,3 +45,22 @@ remove(SRP_Data)
 remove(TI_Data)
 remove(ADI_Data)
 remove(col_names)
+
+### STEP 2: CLEANING DATASET ###
+
+#First, lets create a DataExplorer report to explore missing data
+create_report(Solar_Data0)
+#From the report we see that our dataset is very complete
+#We have 20 observations with missing town and zip codes, we will leave these in
+#They still have county codes so we may roll them up or remove later
+
+#We will now try and match up duplicate city names
+solar_mun <- unique(Solar_Data0$CITY)
+#5,223 unique city names, when there are only 564 municipalities in NJ
+#Maybe that's too much to clean up, and we should just use zip codes
+
+
+#Reformat Zip Codes, since they're missing 0's: Not elegant but works
+Solar_Data0$ZIP <- paste("0",Solar_Data0$ZIP,sep="")
+Solar_Data0$ZIP[Solar_Data0$ZIP=="0NA"] <- NA
+
