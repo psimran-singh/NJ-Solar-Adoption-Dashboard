@@ -2,6 +2,7 @@
 
 #Load necessary libraries
 library(tidyverse)
+library(DataExplorer)
 
 #Set Working Directory to Github folder
 #Change to appropriate location if running on your own
@@ -63,4 +64,8 @@ solar_mun <- unique(Solar_Data0$CITY)
 #Reformat Zip Codes, since they're missing 0's: Not elegant but works
 Solar_Data0$ZIP <- paste("0",Solar_Data0$ZIP,sep="")
 Solar_Data0$ZIP[Solar_Data0$ZIP=="0NA"] <- NA
+
+
+#Aggregate by Zip Code and County
+
 
