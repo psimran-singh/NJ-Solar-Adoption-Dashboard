@@ -50,22 +50,46 @@ remove(col_names)
 ### STEP 2: CLEANING DATASET ###
 
 #First, lets create a DataExplorer report to explore missing data
-create_report(Solar_Data0)
+#Uncomment to run:
+  #create_report(Solar_Data0)
 #From the report we see that our dataset is very complete
 #We have 20 observations with missing town and zip codes, we will leave these in
 #They still have county codes so we may roll them up or remove later
 
-#We will now try and match up duplicate city names
-solar_mun <- unique(Solar_Data0$CITY)
-#5,223 unique city names, when there are only 564 municipalities in NJ
-#Maybe that's too much to clean up, and we should just use zip codes
+#Recode County_Codes and use county names instead
+#Not sure where NJBPU got these codes, but they aren't handily available anywhere
+#So, I manually went and searched town names in each county code and create this list
+COUNTY_CODE <- c(1:21)
+COUNTY <- c("Sussex","Warren","Morris","Hunterdon","Somerset","Passaic","Bergen",
+            "Hudson","Essex","Union","Middlesex","Mercer","Burlington","Camden",
+            "Gloucester","Salem","Monmouth","Ocean","Atlantic","Cumberland","Cape May")
+County_Code_Conversion <- data.frame(COUNTY_CODE,COUNTY)
+remove(COUNTY_CODE,COUNTY)
 
+Solar_Data1 <- left_join(Solar_Data0,County_Code_Conversion,by=c("COUNTY_CODE"="COUNTY_CODE"))
+Solar_Data1 <- Solar_Data1[c(1:4,10,5:9)]
 
 #Reformat Zip Codes, since they're missing 0's: Not elegant but works
-Solar_Data0$ZIP <- paste("0",Solar_Data0$ZIP,sep="")
-Solar_Data0$ZIP[Solar_Data0$ZIP=="0NA"] <- NA
+Solar_Data1$ZIP <- paste("0",Solar_Data1$ZIP,sep="")
+Solar_Data1$ZIP[Solar_Data1$ZIP=="0NA"] <- NA
 
+remove(County_Code_Conversion)
+remove(Solar_Data0)
 
-#Aggregate by Zip Code and County
+### STEP 3: AGGREGATE DATA AND GET FINAL DATASETS ###
+
+#Aggregate by COUNTY for all CUSTOMER_TYPE
+Solar_All_County <- Solar_Data1 %>% group_by(COUNTY,CUSTOMER_TYPE) %>%
+  summarize(CAPACITY = sum(SYSTEM_SIZE,na.rm=TRUE), 
+            COUNT=n())
+#Aggregate by COUNTY for only RESIDENTIAL
+Solar_Res_County <- Solar_Data1 %>% filter(CUSTOMER_TYPE=="Residential") %>%
+  group_by(COUNTY) %>%
+  summarize(CAPACITY = sum(SYSTEM_SIZE,na.rm=TRUE), COUNT=n())
+
+#Aggregate by County for all CUSTOMER_TYPE
+
+#Aggregate by County for only RESIDENTIAL
+
 
 

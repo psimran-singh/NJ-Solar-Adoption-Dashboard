@@ -1,8 +1,12 @@
-### STEP 0: DOWNLOAD DATA AND TURN IT INTO .csv
+### STEP 0: DOWNLOAD DATA AND PREPARE FOR R IN ARCGIS
 #MODIV Property List is available from NJGIN Open Data website as ArcGIS .gdb file
-#At this URL: https://www.arcgis.com/home/item.html?id=102a9bf3c6da4ca3b9b31f831a1e9f72
-#After downloading, open in ArcMap or other Esri software and export as .csv
-#Now we can work with this .csv and get the data we need.
+    #At this URL: https://www.arcgis.com/home/item.html?id=1029bf3c6da4ca3b9b31f831a1e9f72
+#Zip Code GIS Polygons are available from NJGIN Open Data.
+    #At this URL: https://www.arcgis.com/home/item.html?id=8d2012a2016e484dafaac0451f9aea24
+#After downloading, open both sets of data in ArcGIS or other Esri software
+#Merge the parcel data with the zip code data:
+    #Spatial Join tool and use the "Largest Overlap" option for 'Match Option' in the tool.
+#Now export the .csv out of ArcGIS, and now it is ready to import into R
 
 ### STEP 1: IMPORTING DATA AND CREATING A BASE DATASET ###
 
