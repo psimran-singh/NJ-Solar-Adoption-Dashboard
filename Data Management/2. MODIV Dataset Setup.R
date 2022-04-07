@@ -47,7 +47,7 @@ Zip_Shapes <- Zip_Shapes %>% st_transform(4326)
 
 #Now, join the two spatially join the two datasets with largest overlay as true
 #sf::sf_use_s2(FALSE)
-MODIV_Data_Zip <- st_join(MODIV_Data,Zip_Shapes,join=st_within,largest=TRUE)
+MODIV_Data_Zip <- st_join(MODIV_Data,Zip_Shapes,join=st_intersects,largest=TRUE)
 
 ### STEP 4: AGGREGATE TO COUNTY, ZIP CODE LEVELS ###
 MODIV_County <- MODIV_Data %>% group_by(COUNTY) %>% summarise(COUNT=length(PROP_CLASS))
