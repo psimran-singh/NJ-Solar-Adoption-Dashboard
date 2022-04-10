@@ -42,13 +42,31 @@ MODIV_Data <- MODIV_Data %>% filter(PROP_CLASS==2) %>%
 
 ### STEP 5: ADD ZIP CODES BY SPATIAL JOIN ###
 #First let's makes sure the coordinate reference systems are the same between the two datasets
-MODIV_Data <- MODIV_Data %>% st_transform(4326)
+#There are some data issues with MODIV_Data, where not everything is a "MULTIPOLYGON"
+#This leads to errors, so we cast the whole table to be "MULTIPOLYGON"
+#We run into some issues with spherical geometry, so we use sf_use_s2 to FALSE
+#This is a common fix found online: https://github.com/r-spatial/sf/issues/1762
+sf::sf_use_s2(FALSE)
+MODIV_Data <- MODIV_Data %>% st_transform(4326) %>% st_cast("MULTIPOLYGON") %>% st_centroid()
 Zip_Shapes <- Zip_Shapes %>% st_transform(4326)
 
 #Now, join the two spatially join the two datasets with largest overlay as true
-#sf::sf_use_s2(FALSE)
-MODIV_Data_Zip <- st_join(MODIV_Data,Zip_Shapes,join=st_intersects,largest=TRUE)
+
+MODIV_Data_Zip <- st_join(MODIV_Data,Zip_Shapes,join=st_intersects) 
+MODIV_Data_Flat <- MODIV_Data_Zip %>% st_drop_geometry()
 
 ### STEP 4: AGGREGATE TO COUNTY, ZIP CODE LEVELS ###
-MODIV_County <- MODIV_Data %>% group_by(COUNTY) %>% summarise(COUNT=length(PROP_CLASS))
-MODIV_ZIP <- MODIV_Data %>% group_by(ZIP) %>% summarise(COUNT=length(PROP_CLASS))
+
+MODIV_County <- MODIV_Data_Flat %>%
+  select("PROP_CLASS","COUNTY") %>%
+  group_by(COUNTY) %>% 
+  summarise(COUNT=length(PROP_CLASS))
+
+MODIV_ZIP <- MODIV_Data_Flat %>%
+  select("PROP_CLASS","ZIP_CODE") %>%
+  group_by(ZIP_CODE) %>% 
+  summarise(COUNT=length(ZIP_CODE))
+
+#write_csv(MODIV_County,file="MODIV_County.csv")
+#write_csv(MODIV_ZIP,file="MODIV_Zip.csv")
+
