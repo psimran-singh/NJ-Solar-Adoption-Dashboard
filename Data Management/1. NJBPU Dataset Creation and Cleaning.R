@@ -80,7 +80,7 @@ remove(Solar_Data0)
 
 #Aggregate by COUNTY for all CUSTOMER_TYPE
 Solar_All_County <- Solar_Data1 %>% 
-  group_by(COUNTY) %>%
+  group_by(COUNTY, CUSTOMER_TYPE, THIRD_PARTY_OWNERSHIP) %>%
   summarize(CAPACITY = sum(SYSTEM_SIZE,na.rm=TRUE), COUNT=n())
 #Aggregate by COUNTY for only RESIDENTIAL
 Solar_Res_County <- Solar_Data1 %>% 
@@ -88,10 +88,11 @@ Solar_Res_County <- Solar_Data1 %>%
   group_by(COUNTY) %>%
   summarize(CAPACITY = sum(SYSTEM_SIZE,na.rm=TRUE), COUNT=n())
 
-#Aggregate by Zip Code for all CUSTOMER_TYPE
-Solar_All_Zip <- Solar_Data1 %>% 
-  group_by(ZIP,CUSTOMER_TYPE) %>%
-  summarize(CAPACITY = sum(SYSTEM_SIZE,na.rm=TRUE), COUNT=n())
+# #Aggregate by Zip Code for all CUSTOMER_TYPE
+# #We actually won't need this table
+# Solar_All_Zip <- Solar_Data1 %>% 
+#   group_by(ZIP,CUSTOMER_TYPE) %>%
+#   summarize(CAPACITY = sum(SYSTEM_SIZE,na.rm=TRUE), COUNT=n())
 #Aggregate by Zip Code for only RESIDENTIAL
 Solar_Res_Zip <- Solar_Data1 %>% 
   filter(CUSTOMER_TYPE=="Residential") %>%

@@ -22,6 +22,7 @@
 #Load necessary libraries
 library(tidyverse)
 library(sf)
+library(DataExplorer)
 
 #Set Working Directory to wherever MODIV .csv file is
 #Change to appropriate location if running on your own
@@ -51,17 +52,19 @@ MODIV_Data <- MODIV_Data %>% st_transform(4326) %>% st_cast("MULTIPOLYGON") %>% 
 Zip_Shapes <- Zip_Shapes %>% st_transform(4326)
 
 #Now, join the two spatially join the two datasets with largest overlay as true
-
 MODIV_Data_Zip <- st_join(MODIV_Data,Zip_Shapes,join=st_intersects) 
 MODIV_Data_Flat <- MODIV_Data_Zip %>% st_drop_geometry()
 
-### STEP 4: AGGREGATE TO COUNTY, ZIP CODE LEVELS ###
+#Lets check how good our join is
+#create_report(MODIV_Data_Flat)
 
+### STEP 4: AGGREGATE TO COUNTY, ZIP CODE LEVELS ###
+#By County
 MODIV_County <- MODIV_Data_Flat %>%
   select("PROP_CLASS","COUNTY") %>%
   group_by(COUNTY) %>% 
   summarise(COUNT=length(PROP_CLASS))
-
+#By ZIP
 MODIV_ZIP <- MODIV_Data_Flat %>%
   select("PROP_CLASS","ZIP_CODE") %>%
   group_by(ZIP_CODE) %>% 
