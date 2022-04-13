@@ -6,15 +6,31 @@ library(plotly)
 library(tidyverse)
 
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
-capacity <- read_csv("Capacity Trend.csv")
+capacity <- read_csv("Capacity Trend (MW).csv") 
 quantity <- read_csv("Quantity Trend.csv")
 
+colnames(capacity) <- c("Year",
+                        "Residential Capacity",
+                        "Non-Residential Capacity",
+                        "Grid Supply Capacity",
+                        "Residential Capacity (Cumulative)",
+                        "Non-Residential Capacity (Cumulative)",
+                        "Grid Supply Capacity (Cumulative)")
+colnames(quantity) <- c("Year",
+                        "Residential Quantity",
+                        "Non-Residential Quantity",
+                        "Grid Supply Quantity",
+                        "Residential Quantity (Cumulative)",
+                        "Non-Residential Quantity (Cumulative)",
+                        "Grid Supply Quantity (Cumulative")
 
-fig <- plot_ly(capacity, x = ~Date, y = ~residential_cum, type = 'bar', name = 'Residential') %>% 
-  add_trace(y = ~non_residential_cum, name = 'Non-Residential') %>%
-  add_trace(y = ~grid_supply_cum, name = 'Grid Supply') %>%
-  layout(yaxis = list(title = "Capacity (kW)"), 
-         xaxis = list(title = "Year", tickangle = -45),
+data <- cbind(capacity, quantity[c(2:7)])
+
+fig <- plot_ly(data, x = ~Year, y = ~`Residential Capacity (Cumulative)`,
+               type = 'bar', name = 'Residential') %>% 
+  add_trace(y = ~`Non-Residential Capacity (Cumulative)`, name = 'Non-Residential') %>%
+  add_trace(y = ~`Grid Supply Capacity (Cumulative)`, name = 'Grid Supply') %>%
+  layout(yaxis = list(title = "Capacity (MW)"), 
+         xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
          barmode='stack')
-
 fig
