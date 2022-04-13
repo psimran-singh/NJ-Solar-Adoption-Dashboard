@@ -22,9 +22,10 @@ colnames(quantity) <- c("Year",
                         "Grid Supply Quantity",
                         "Residential Quantity (Cumulative)",
                         "Non-Residential Quantity (Cumulative)",
-                        "Grid Supply Quantity (Cumulative")
+                        "Grid Supply Quantity (Cumulative)")
 
 data <- cbind(capacity, quantity[c(2:7)])
+write_csv(data, file="Trend.csv")
 
 fig <- plot_ly(data, x = ~Year, y = ~`Residential Capacity (Cumulative)`,
                type = 'bar', name = 'Residential') %>% 
