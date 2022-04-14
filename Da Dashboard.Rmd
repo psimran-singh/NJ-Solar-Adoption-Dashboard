@@ -30,14 +30,14 @@ totals <- read_csv('kw_co2_conversions.csv')
 ```
 
 
-Overall
+Overall Trends
 =====================================
 
 <!-- Solar Energy in New Jersey {.sidebar} -->
 <!-- ----------------------------------------------------------------------- -->
 <!-- Placeholder - Talk about some stuff -->
 
-Row {data-}
+Row
 -----------------------------------------------------------------------
 
 ### Total Current Installed Solar Capacity
@@ -46,7 +46,7 @@ Row {data-}
 renderValueBox({
   total_cap <- paste(prettyNum(totals[1,2]/1000,big.mark=",",digits=0)," MW")
   valueBox(total_cap, 
-           icon = "")
+           icon = "fa-sun")
 })
 ```
 
@@ -135,3 +135,66 @@ fig4 <- plot_ly(trend, x = ~Year, y = ~`Residential Quantity`,
          barmode='stack')
 fig4
 ```
+
+
+
+
+Current Landscape by County
+=====================================
+
+<!-- Solar Energy in New Jersey {.sidebar} -->
+<!-- ----------------------------------------------------------------------- -->
+<!-- Placeholder - Talk about some stuff -->
+
+Row
+-----------------------------------------------------------------------
+
+### Total Current Installed Solar Capacity
+
+```{r}
+renderValueBox({
+  total_cap <- paste(prettyNum(totals[1,2]/1000,big.mark=",",digits=0)," MW")
+  valueBox(total_cap, 
+           icon = "fa-sun")
+})
+```
+
+### Total Metric Tons of CO~2~ Emissions Avoided
+
+```{r}
+renderValueBox({
+  total_co2 <- paste(prettyNum(totals[1,3],big.mark=","))
+  valueBox(total_co2,
+           icon = "")
+})
+```
+
+
+### Total Passenger Cars Taken Off the Road for 1 Year
+
+```{r}
+renderValueBox({
+  total_cars <- prettyNum(totals[1,4],big.mark=",")
+  valueBox(total_cars,
+           icon = "")
+})
+```
+
+### Total Tree Seedlings Grown for 10 Years
+
+```{r}
+renderValueBox({
+  total_trees <- prettyNum(totals[1,5],big.mark=",")
+  valueBox(total_trees,
+           icon = "")
+})
+```
+
+
+Current Residential Landscape
+=====================================
+
+
+
+Current Landscape by County
+=====================================
