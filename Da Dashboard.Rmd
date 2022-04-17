@@ -23,24 +23,46 @@ library(nivocal)
 
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 
-## Section 1: Overall Trends ## 
+## Section 1: Overall Landscape ##
+# Load in all the data we need
+county_level_rates <- read_csv('Solar + Census Data - COUNTY.csv') %>%
+  select(c(2:4,10)) %>%
+  rbind(list(c("Total", sum(CAPACITY), sum(COUNT), NA))) %>%
+  
+
+
+## Section 2: Overall Trends ## 
 # Load in all the data we need
 trend <- read_csv('Trend.csv')
 trend_trans <- read_csv('Trend_Transposed.csv')
+trend_yoy <- read_csv('Trend_Percents.csv')
 co2 <- read_csv('KW_CO2_Conversions.csv')
 
 ```
 
-
-Overall Trends
+Overall Landscape
 =====================================
 
-<!-- Solar Energy in New Jersey {.sidebar} -->
-<!-- ----------------------------------------------------------------------- -->
-<!-- Placeholder - Talk about some stuff -->
-
-Row
+County Level Analysis {.sidebar}
 -----------------------------------------------------------------------
+
+Select your county below.
+
+```{r}
+selectInput("County", "County:", choices = distinct(data1033, `State`))
+```
+
+
+```{r}
+renderUI({state_name <- state_data %>% filter(state.abb == input$state) %>% .$state.name
+state_equipment <- data1033 %>% filter(State == input$state)
+top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1)
+tags$h2(paste(state_name, 'at a glance')
+)})
+renderUI({state_equipment <- data1033 %>% filter(State == input$state)
+top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1)
+tags$p(paste('The most militarized agency was', top_agency$`Station Name (LEA)`,'which received',top_agency$n, 'shipments.'))})
+```
 
 ### Current Installed Solar Capacity in NJ
 
@@ -56,8 +78,40 @@ renderValueBox({
 
 ```{r}
 renderValueBox({
-  total_co2 <- paste(prettyNum(trend_trans[3,23],big.mark=","))
-  valueBox(total_co2,
+  total_quant <- paste(prettyNum(trend_trans[3,23], big.mark=","))
+  valueBox(total_quant,
+           icon = "fa-solar-panel")
+})
+```
+
+
+
+Overall Trends
+=====================================
+
+<!-- Solar Energy in New Jersey {.sidebar} -->
+<!-- ----------------------------------------------------------------------- -->
+<!-- Placeholder - Talk about some stuff -->
+
+Row
+-----------------------------------------------------------------------
+
+### Year over Year Installed Capacity Growth (2020-2021)
+
+```{r}
+renderValueBox({
+  cap_yoy <- paste(prettyNum(trend_yoy[22,9],big.mark=",",digits=2))
+  valueBox(cap_yoy, 
+           icon = "fa-sun")
+})
+```
+
+### Year over Year Project Quantity Growth (2020-2021)
+
+```{r}
+renderValueBox({
+  quant_yoy <- paste(prettyNum(trend_yoy[22,17],big.mark=",",digits=2))
+  valueBox(quant_yoy,
            icon = "fa-solar-panel")
 })
 ```
@@ -70,12 +124,11 @@ Row {.tabset}
 
 ```{r}
 fig1 <- plot_ly(trend, x = ~Year, y = ~`Residential Capacity (Cumulative)`,
-               type = 'bar', name = 'Residential') %>% 
+               type = 'scatter', mode = 'lines+markers', name = 'Residential') %>% 
   add_trace(y = ~`Non-Residential Capacity (Cumulative)`, name = 'Non-Residential') %>%
   add_trace(y = ~`Grid Supply Capacity (Cumulative)`, name = 'Grid Supply') %>%
   layout(yaxis = list(title = "Capacity (MW)"), 
-         xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
-         barmode='stack',
+         xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear', limits=c(2000,2021)),
          hovermode='x')
 fig1
 ```
@@ -84,12 +137,11 @@ fig1
 
 ```{r}
 fig2 <- plot_ly(trend, x = ~Year, y = ~`Residential Capacity`,
-               type = 'bar', name = 'Residential') %>%
+               type = 'scatter', mode = 'lines+markers', name = 'Residential') %>%
   add_trace(y = ~`Non-Residential Capacity`, name = 'Non-Residential') %>%
   add_trace(y = ~`Grid Supply Capacity`, name = 'Grid Supply') %>%
   layout(yaxis = list(title = "Capacity (MW)"),
          xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
-         barmode='stack',
          hovermode='x')
 fig2
 ```
@@ -98,12 +150,11 @@ fig2
 
 ```{r}
 fig3 <- plot_ly(trend, x = ~Year, y = ~`Residential Quantity (Cumulative)`,
-               type = 'bar', name = 'Residential') %>%
+               type = 'scatter', mode = 'lines+markers', name = 'Residential') %>%
   add_trace(y = ~`Non-Residential Quantity (Cumulative)`, name = 'Non-Residential') %>%
   add_trace(y = ~`Grid Supply Quantity (Cumulative)`, name = 'Grid Supply') %>%
   layout(yaxis = list(title = "Quantity"),
          xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
-         barmode='stack',
          hovermode='x')
 fig3
 ```
@@ -112,12 +163,11 @@ fig3
 
 ```{r}
 fig4 <- plot_ly(trend, x = ~Year, y = ~`Residential Quantity`,
-               type = 'bar', name = 'Residential') %>%
+               type = 'scatter', mode = 'lines+markers', name = 'Residential') %>%
   add_trace(y = ~`Non-Residential Quantity`, name = 'Non-Residential') %>%
   add_trace(y = ~`Grid Supply Quantity`, name = 'Grid Supply') %>%
   layout(yaxis = list(title = "Quantity"),
          xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
-         barmode='stack',
          hovermode='x')
 fig4
 ```
@@ -138,33 +188,6 @@ DT::renderDataTable({
                     list(className = 'dt-center', targets = "_all"))))
 })
 ```
-
-Overall Landscape
-=====================================
-
-### Total Current Installed Solar Capacity
-
-```{r}
-renderValueBox({
-  total_cap <- paste(prettyNum(totals[1,2]/1000,big.mark=",",digits=0)," MW")
-  valueBox(total_cap, 
-           icon = "fa-sun")
-})
-```
-
-### Total Metric Tons of CO~2~ Emissions Avoided
-
-```{r}
-renderValueBox({
-  total_co2 <- paste(prettyNum(totals[1,3],big.mark=","))
-  valueBox(total_co2,
-           icon = "")
-})
-```
-
-
-Current Landscape
-=====================================
 
 
 
