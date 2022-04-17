@@ -57,8 +57,8 @@ remove(zip_income, zip_perc_male, zip_perc_white, zip_total_house, zip_owner_hou
 # final datasets
 setwd("~/Data Viz in R/Data-Visualization-Final-Project/Data Files for Analysis")
 write.csv(zip_housing, "Census Housing Data by ZIP.csv")
-write.csv(Solar_Res_Zip,"Solar + Census Data - ZIP.csv", row.names = TRUE)
-write.csv(Solar_Res_County,"Solar + Census Data - COUNTY.csv", row.names = TRUE)
+write.csv(Solar_Res_Zip,"Residential_Solar_Zip.csv", row.names = TRUE)
+write.csv(Solar_Res_County,"Residential_Solar_County.csv", row.names = TRUE)
 
 
 
