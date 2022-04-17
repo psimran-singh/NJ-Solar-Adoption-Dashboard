@@ -26,6 +26,7 @@ setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 ## Section 1: Overall Landscape ##
 # Load in all the data we need
 county_level_rates <- read_csv('County_Totals.csv')
+county_level_sectors <- read_csv('County_Sectors.csv')
 
 ## Section 2: Overall Trends ## 
 # Load in all the data we need
@@ -39,27 +40,17 @@ co2 <- read_csv('KW_CO2_Conversions.csv')
 Overall Landscape
 =====================================
 
-{.sidebar}
+Current Landscape {.sidebar}
 -----------------------------------------------------------------------
 
-Select your county below.
+Pick a county to highlight below:
 
 ```{r}
 selectInput("County", "County:", choices = distinct(county_level_rates, `County`))
-# renderUI({county_name <- county_level_rates %>% filter(`County` == input$County) %>% .$county.name
 ```
 
-
-<!-- ```{r} -->
-<!-- renderUI({state_name <- state_data %>% filter(state.abb == input$state) %>% .$state.name -->
-<!-- state_equipment <- data1033 %>% filter(State == input$state) -->
-<!-- top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1) -->
-<!-- tags$h2(paste(state_name, 'at a glance') -->
-<!-- )}) -->
-<!-- renderUI({state_equipment <- data1033 %>% filter(State == input$state) -->
-<!-- top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1) -->
-<!-- tags$p(paste('The most militarized agency was', top_agency$`Station Name (LEA)`,'which received',top_agency$n, 'shipments.'))}) -->
-<!-- ``` -->
+Row
+-----------------------------------------------------------------------
 
 ### Current Installed Solar Capacity
 
@@ -81,14 +72,83 @@ renderValueBox({
 })
 ```
 
+Row {.tabset}
+-----------------------------------------------------------------------
 
+### Capacity by Sector
+
+```{r}
+renderPlotly(
+  {county_level_sectors0 <- county_level_sectors %>% filter(County != "Overall") %>%
+    mutate(selected = ifelse(County == input$County, TRUE, FALSE))
+  
+  colors <- county_level_sectors0 %>% select(County,selected) %>% 
+    mutate(res_color = ifelse(selected == TRUE, "#6367CE", "#9FA3F2")) %>%
+    mutate(nonres_color = ifelse(selected == TRUE, "#F1A73E", "#F7C57D")) %>%
+    mutate(gs_color = ifelse(selected == TRUE, "#4DBA37", "#89EA76"))
+
+fig <- plot_ly(county_level_sectors0, 
+               x = county_level_sectors0$`County`, 
+               y = county_level_sectors0$`cap_res`,
+               type = "bar", 
+               name = "Residential",
+               marker = list(color = colors$res_color))  %>%
+  add_trace(y = county_level_sectors0$`cap_nonres`,
+            name = 'Non-Residential',
+            marker = list(color = colors$nonres_color))  %>%
+  add_trace(y = county_level_sectors0$`cap_gs`,
+            name = 'Grid Supply',
+            marker = list(color = colors$gs_color))  %>%
+  layout(yaxis = list(title = "Capacity (MW)"), 
+         xaxis = list(title = "Year",
+                      tickangle = -45,
+                      tickmode = 'linear', 
+                      categoryorder = "total descending"),
+         hovermode='x',
+         barmode = "stack")
+  fig}
+)
+
+```
+
+### Quantity by Sector
+
+```{r}
+renderPlotly(
+  {county_level_sectors0 <- county_level_sectors %>% filter(County != "Overall") %>%
+    mutate(selected = ifelse(County == input$County, TRUE, FALSE))
+  
+  colors <- county_level_sectors0 %>% select(County,selected) %>% 
+    mutate(res_color = ifelse(selected == TRUE, "#6367CE", "#9FA3F2")) %>%
+    mutate(nonres_color = ifelse(selected == TRUE, "#F1A73E", "#F7C57D")) %>%
+    mutate(gs_color = ifelse(selected == TRUE, "#4DBA37", "#89EA76"))
+
+fig <- plot_ly(county_level_sectors0, 
+               x = county_level_sectors0$`County`, 
+               y = county_level_sectors0$`quant_res`,
+               type = "bar", 
+               name = "Residential",
+               marker = list(color = colors$res_color))  %>%
+  add_trace(y = county_level_sectors0$`quant_nonres`,
+            name = 'Non-Residential',
+            marker = list(color = colors$nonres_color))  %>%
+  add_trace(y = county_level_sectors0$`quant_gs`,
+            name = 'Grid Supply',
+            marker = list(color = colors$gs_color))  %>%
+  layout(yaxis = list(title = "quantacity (MW)"), 
+         xaxis = list(title = "Year",
+                      tickangle = -45,
+                      tickmode = 'linear', 
+                      categoryorder = "total descending"),
+         hovermode='x',
+         barmode = "stack")
+  fig}
+)
+
+```
 
 Overall Trends
 =====================================
-
-<!-- Solar Energy in New Jersey {.sidebar} -->
-<!-- ----------------------------------------------------------------------- -->
-<!-- Placeholder - Talk about some stuff -->
 
 Row
 -----------------------------------------------------------------------
@@ -99,7 +159,7 @@ Row
 renderValueBox({
   cap_yoy <- paste(prettyNum(trend_yoy[22,9],big.mark=",",digits=2))
   valueBox(cap_yoy, 
-           icon = "fa-sun")
+     icon = "fa-sun")
 })
 ```
 
