@@ -2,7 +2,7 @@
 title: "Solar Adoption in New Jersey"
 output: 
   flexdashboard::flex_dashboard:
-    theme: darkly
+    theme: default
     orientation: rows
     source_code: "https://github.com/psimran-singh/Data-Visualization-Final-Project"
     vertical_layout: scroll
@@ -21,11 +21,13 @@ library(xts)
 library(dygraphs)
 library(nivocal)
 
-# Load in all the data we need
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
-trend <- read_csv('Trend.csv')
-totals <- read_csv('kw_co2_conversions.csv')
 
+## Section 1: Overall Trends ## 
+# Load in all the data we need
+trend <- read_csv('Trend.csv')
+trend_trans <- read_csv('Trend_Transposed.csv')
+co2 <- read_csv('KW_CO2_Conversions.csv')
 
 ```
 
@@ -40,21 +42,21 @@ Overall Trends
 Row
 -----------------------------------------------------------------------
 
-### Current Solar Capacity in NJ
+### Current Installed Solar Capacity in NJ
 
 ```{r}
 renderValueBox({
-  total_cap <- paste(prettyNum(totals[1,2]/1000,big.mark=",",digits=0)," MW")
+  total_cap <- paste(prettyNum(trend_trans[4,23],big.mark=",",digits=0)," MW")
   valueBox(total_cap, 
            icon = "fa-sun")
 })
 ```
 
-### Current Solar Projects in NJ
+### Current Installed Solar Projects in NJ
 
 ```{r}
 renderValueBox({
-  total_co2 <- paste(prettyNum(totals[1,3],big.mark=","))
+  total_co2 <- paste(prettyNum(trend_trans[3,23],big.mark=","))
   valueBox(total_co2,
            icon = "fa-solar-panel")
 })
@@ -120,15 +122,25 @@ fig4 <- plot_ly(trend, x = ~Year, y = ~`Residential Quantity`,
 fig4
 ```
 
-Current Overall Landscape
-=====================================
-
-<!-- Solar Energy in New Jersey {.sidebar} -->
-<!-- ----------------------------------------------------------------------- -->
-<!-- Placeholder - Talk about some stuff -->
-
-Row
+Row {.tabset}
 -----------------------------------------------------------------------
+```{r}
+DT::renderDataTable({
+  DT::datatable(trend_trans,
+                class = 'cell-border stripe',
+                extensions = 'Responsive', 
+                escape = FALSE, 
+                rownames = FALSE, 
+                options = list(bPaginate = FALSE,
+                               ordering=FALSE,
+                               autoWidth = TRUE,
+  columnDefs = list(list(width = '200px', targets = "_all"),
+                    list(className = 'dt-center', targets = "_all"))))
+})
+```
+
+Overall Landscape
+=====================================
 
 ### Total Current Installed Solar Capacity
 
@@ -151,7 +163,7 @@ renderValueBox({
 ```
 
 
-Current Residential Landscape
+Current Landscape
 =====================================
 
 

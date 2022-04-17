@@ -27,6 +27,7 @@ colnames(quantity) <- c("Year",
 data <- cbind(capacity, quantity[c(2:7)])
 write_csv(data, file="Trend.csv")
 
+# Stacked Bar
 fig <- plot_ly(data, x = ~Year, y = ~`Residential Capacity (Cumulative)`,
                type = 'bar', name = 'Residential') %>% 
   add_trace(y = ~`Non-Residential Capacity (Cumulative)`, name = 'Non-Residential') %>%
@@ -34,4 +35,13 @@ fig <- plot_ly(data, x = ~Year, y = ~`Residential Capacity (Cumulative)`,
   layout(yaxis = list(title = "Capacity (MW)"), 
          xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
          barmode='stack')
+fig
+
+# Line Chart
+fig <- plot_ly(data, x = ~Year, y = ~`Residential Capacity (Cumulative)`,
+               type = 'scatter', name = 'Residential', mode = 'lines+markers') %>% 
+  add_trace(y = ~`Non-Residential Capacity (Cumulative)`, name = 'Non-Residential') %>%
+  add_trace(y = ~`Grid Supply Capacity (Cumulative)`, name = 'Grid Supply') %>%
+  layout(yaxis = list(title = "Capacity (MW)"), 
+         xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'))
 fig
