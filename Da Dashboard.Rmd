@@ -25,11 +25,7 @@ setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 
 ## Section 1: Overall Landscape ##
 # Load in all the data we need
-county_level_rates <- read_csv('Solar + Census Data - COUNTY.csv') %>%
-  select(c(2:4,10)) %>%
-  rbind(list(c("Total", sum(CAPACITY), sum(COUNT), NA))) %>%
-  
-
+county_level_rates <- read_csv('County_Totals.csv')
 
 ## Section 2: Overall Trends ## 
 # Load in all the data we need
@@ -43,42 +39,43 @@ co2 <- read_csv('KW_CO2_Conversions.csv')
 Overall Landscape
 =====================================
 
-County Level Analysis {.sidebar}
+{.sidebar}
 -----------------------------------------------------------------------
 
 Select your county below.
 
 ```{r}
-selectInput("County", "County:", choices = distinct(data1033, `State`))
+selectInput("County", "County:", choices = distinct(county_level_rates, `County`))
+# renderUI({county_name <- county_level_rates %>% filter(`County` == input$County) %>% .$county.name
 ```
 
 
-```{r}
-renderUI({state_name <- state_data %>% filter(state.abb == input$state) %>% .$state.name
-state_equipment <- data1033 %>% filter(State == input$state)
-top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1)
-tags$h2(paste(state_name, 'at a glance')
-)})
-renderUI({state_equipment <- data1033 %>% filter(State == input$state)
-top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1)
-tags$p(paste('The most militarized agency was', top_agency$`Station Name (LEA)`,'which received',top_agency$n, 'shipments.'))})
-```
+<!-- ```{r} -->
+<!-- renderUI({state_name <- state_data %>% filter(state.abb == input$state) %>% .$state.name -->
+<!-- state_equipment <- data1033 %>% filter(State == input$state) -->
+<!-- top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1) -->
+<!-- tags$h2(paste(state_name, 'at a glance') -->
+<!-- )}) -->
+<!-- renderUI({state_equipment <- data1033 %>% filter(State == input$state) -->
+<!-- top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1) -->
+<!-- tags$p(paste('The most militarized agency was', top_agency$`Station Name (LEA)`,'which received',top_agency$n, 'shipments.'))}) -->
+<!-- ``` -->
 
-### Current Installed Solar Capacity in NJ
+### Current Installed Solar Capacity
 
 ```{r}
 renderValueBox({
-  total_cap <- paste(prettyNum(trend_trans[4,23],big.mark=",",digits=0)," MW")
+  total_cap <- paste(prettyNum(county_level_rates[county_level_rates$County==input$County,4],big.mark=",",digits=0)," MW")
   valueBox(total_cap, 
            icon = "fa-sun")
 })
 ```
 
-### Current Installed Solar Projects in NJ
+### Current Installed Solar Projects
 
 ```{r}
 renderValueBox({
-  total_quant <- paste(prettyNum(trend_trans[3,23], big.mark=","))
+  total_quant <- paste(prettyNum(county_level_rates[county_level_rates$County==input$County,2], big.mark=","))
   valueBox(total_quant,
            icon = "fa-solar-panel")
 })
