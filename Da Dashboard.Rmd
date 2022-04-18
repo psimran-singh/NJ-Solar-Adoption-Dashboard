@@ -231,6 +231,27 @@ fig4
 
 Row {.tabset}
 -----------------------------------------------------------------------
+
+### Overall
+
+```{r}
+DT::renderDataTable({
+  DT::datatable(trend_trans,
+                class = 'compact nowrap cell-border stripe',
+                extensions = c('Responsive','Scroller','Buttons'), 
+                escape = FALSE, 
+                rownames = FALSE,
+                options = list(bPaginate = FALSE,
+                               ordering=FALSE,
+                               autoWidth = TRUE,
+                               scrollX=TRUE,
+                               searching = FALSE,
+                               buttons = c('colvis', 'excel')))
+})
+```
+
+### Residential
+
 ```{r}
 DT::renderDataTable({
   DT::datatable(trend_trans,
@@ -241,10 +262,45 @@ DT::renderDataTable({
                 options = list(bPaginate = FALSE,
                                ordering=FALSE,
                                autoWidth = TRUE,
+                               scrollX=TRUE,
   columnDefs = list(list(width = '200px', targets = "_all"),
                     list(className = 'dt-center', targets = "_all"))))
 })
 ```
 
 
+### Non-Residential
 
+```{r}
+DT::renderDataTable({
+  DT::datatable(trend_trans,
+                class = 'cell-border stripe',
+                extensions = 'Responsive', 
+                escape = FALSE, 
+                rownames = FALSE, 
+                options = list(bPaginate = FALSE,
+                               ordering=FALSE,
+                               autoWidth = TRUE,
+                               scrollX=TRUE,
+  columnDefs = list(list(width = '200px', targets = "_all"),
+                    list(className = 'dt-center', targets = "_all"))))
+})
+```
+
+### Grid Supply
+
+```{r}
+DT::renderDataTable({
+  DT::datatable(trend_trans,
+                class = 'cell-border stripe',
+                extensions = 'Responsive', 
+                escape = FALSE, 
+                rownames = FALSE, 
+                options = list(bPaginate = FALSE,
+                               ordering=FALSE,
+                               autoWidth = TRUE,
+                               scrollX=TRUE,
+  columnDefs = list(list(width = '200px', targets = "_all"),
+                    list(className = 'dt-center', targets = "_all"))))
+})
+```
