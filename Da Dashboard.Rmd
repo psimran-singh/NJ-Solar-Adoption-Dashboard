@@ -2,10 +2,10 @@
 title: "Solar Adoption in New Jersey"
 output: 
   flexdashboard::flex_dashboard:
-    theme: darkly
+    theme: default
     orientation: rows
     source_code: "https://github.com/psimran-singh/Data-Visualization-Final-Project"
-    vertical_layout: fill
+    vertical_layout: scroll
 runtime: shiny
 
 ---
@@ -21,113 +21,134 @@ library(xts)
 library(dygraphs)
 library(nivocal)
 
-<<<<<<< HEAD
-=======
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 
 ## Section 1: Overall Landscape ##
 # Load in all the data we need
 county_level_rates <- read_csv('County_Totals.csv')
+county_level_sectors <- read_csv('County_Sectors.csv')
 
 ## Section 2: Overall Trends ## 
->>>>>>> parent of 24ec4b5 (Updated county level charts)
 # Load in all the data we need
-setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 trend <- read_csv('Trend.csv')
-totals <- read_csv('kw_co2_conversions.csv')
-
+trend_trans <- read_csv('Trend_Transposed.csv')
+trend_yoy <- read_csv('Trend_Percents.csv')
+co2 <- read_csv('KW_CO2_Conversions.csv')
 
 ```
 
-
-<<<<<<< HEAD
-Overall Trends
+Overall Landscape
 =====================================
 
-<<<<<<< HEAD
-<!-- Solar Energy in New Jersey {.sidebar} -->
-<!-- ----------------------------------------------------------------------- -->
-<!-- Placeholder - Talk about some stuff -->
-=======
-=======
->>>>>>> parent of 24ec4b5 (Updated county level charts)
-{.sidebar}
+Current Landscape {.sidebar}
 -----------------------------------------------------------------------
 
-Select your county below.
+Pick a county to highlight below:
 
 ```{r}
 selectInput("County", "County:", choices = distinct(county_level_rates, `County`))
-# renderUI({county_name <- county_level_rates %>% filter(`County` == input$County) %>% .$county.name
 ```
->>>>>>> parent of 24ec4b5 (Updated county level charts)
 
-<<<<<<< HEAD
-=======
+Row
+-----------------------------------------------------------------------
 
-<!-- ```{r} -->
-<!-- renderUI({state_name <- state_data %>% filter(state.abb == input$state) %>% .$state.name -->
-<!-- state_equipment <- data1033 %>% filter(State == input$state) -->
-<!-- top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1) -->
-<!-- tags$h2(paste(state_name, 'at a glance') -->
-<!-- )}) -->
-<!-- renderUI({state_equipment <- data1033 %>% filter(State == input$state) -->
-<!-- top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1) -->
-<!-- tags$p(paste('The most militarized agency was', top_agency$`Station Name (LEA)`,'which received',top_agency$n, 'shipments.'))}) -->
-<!-- ``` -->
->>>>>>> parent of 24ec4b5 (Updated county level charts)
-
-<!-- ```{r} -->
-<!-- renderUI({state_name <- state_data %>% filter(state.abb == input$state) %>% .$state.name -->
-<!-- state_equipment <- data1033 %>% filter(State == input$state) -->
-<!-- top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1) -->
-<!-- tags$h2(paste(state_name, 'at a glance') -->
-<!-- )}) -->
-<!-- renderUI({state_equipment <- data1033 %>% filter(State == input$state) -->
-<!-- top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1) -->
-<!-- tags$p(paste('The most militarized agency was', top_agency$`Station Name (LEA)`,'which received',top_agency$n, 'shipments.'))}) -->
-<!-- ``` -->
-
-### Total Current Installed Solar Capacity
+### Current Installed Solar Capacity
 
 ```{r}
 renderValueBox({
-  total_cap <- paste(prettyNum(totals[1,2]/1000,big.mark=",",digits=0)," MW")
+  total_cap <- paste(prettyNum(county_level_rates[county_level_rates$County==input$County,4],big.mark=",",digits=0)," MW")
   valueBox(total_cap, 
            icon = "fa-sun")
 })
 ```
 
-### Total Metric Tons of CO~2~ Emissions Avoided
+### Current Installed Solar Projects
 
 ```{r}
 renderValueBox({
-  total_co2 <- paste(prettyNum(totals[1,3],big.mark=","))
-  valueBox(total_co2,
-           icon = "")
+  total_quant <- paste(prettyNum(county_level_rates[county_level_rates$County==input$County,2], big.mark=","))
+  valueBox(total_quant,
+           icon = "fa-solar-panel")
 })
 ```
 
+Row {.tabset}
+-----------------------------------------------------------------------
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-### Total Passenger Cars Taken Off the Road for 1 Year
+### Capacity by Sector
 
 ```{r}
-renderValueBox({
-  total_cars <- prettyNum(totals[1,4],big.mark=",")
-  valueBox(total_cars,
-           icon = "")
-=======
-=======
->>>>>>> parent of 24ec4b5 (Updated county level charts)
+renderPlotly(
+  {county_level_sectors0 <- county_level_sectors %>% filter(County != "Overall") %>%
+    mutate(selected = ifelse(County == input$County, TRUE, FALSE))
+  
+  colors <- county_level_sectors0 %>% select(County,selected) %>% 
+    mutate(res_color = ifelse(selected == TRUE, "#6367CE", "#9FA3F2")) %>%
+    mutate(nonres_color = ifelse(selected == TRUE, "#F1A73E", "#F7C57D")) %>%
+    mutate(gs_color = ifelse(selected == TRUE, "#4DBA37", "#89EA76"))
+
+fig <- plot_ly(county_level_sectors0, 
+               x = county_level_sectors0$`County`, 
+               y = county_level_sectors0$`cap_res`,
+               type = "bar", 
+               name = "Residential",
+               marker = list(color = colors$res_color))  %>%
+  add_trace(y = county_level_sectors0$`cap_nonres`,
+            name = 'Non-Residential',
+            marker = list(color = colors$nonres_color))  %>%
+  add_trace(y = county_level_sectors0$`cap_gs`,
+            name = 'Grid Supply',
+            marker = list(color = colors$gs_color))  %>%
+  layout(yaxis = list(title = "Capacity (MW)"), 
+         xaxis = list(title = "Year",
+                      tickangle = -45,
+                      tickmode = 'linear', 
+                      categoryorder = "total descending"),
+         hovermode='x',
+         barmode = "stack")
+  fig}
+)
+
+```
+
+### Quantity by Sector
+
+```{r}
+renderPlotly(
+  {county_level_sectors0 <- county_level_sectors %>% filter(County != "Overall") %>%
+    mutate(selected = ifelse(County == input$County, TRUE, FALSE))
+  
+  colors <- county_level_sectors0 %>% select(County,selected) %>% 
+    mutate(res_color = ifelse(selected == TRUE, "#6367CE", "#9FA3F2")) %>%
+    mutate(nonres_color = ifelse(selected == TRUE, "#F1A73E", "#F7C57D")) %>%
+    mutate(gs_color = ifelse(selected == TRUE, "#4DBA37", "#89EA76"))
+
+fig <- plot_ly(county_level_sectors0, 
+               x = county_level_sectors0$`County`, 
+               y = county_level_sectors0$`quant_res`,
+               type = "bar", 
+               name = "Residential",
+               marker = list(color = colors$res_color))  %>%
+  add_trace(y = county_level_sectors0$`quant_nonres`,
+            name = 'Non-Residential',
+            marker = list(color = colors$nonres_color))  %>%
+  add_trace(y = county_level_sectors0$`quant_gs`,
+            name = 'Grid Supply',
+            marker = list(color = colors$gs_color))  %>%
+  layout(yaxis = list(title = "quantacity (MW)"), 
+         xaxis = list(title = "Year",
+                      tickangle = -45,
+                      tickmode = 'linear', 
+                      categoryorder = "total descending"),
+         hovermode='x',
+         barmode = "stack")
+  fig}
+)
+
+```
 
 Overall Trends
 =====================================
-
-<!-- Solar Energy in New Jersey {.sidebar} -->
-<!-- ----------------------------------------------------------------------- -->
-<!-- Placeholder - Talk about some stuff -->
 
 Row
 -----------------------------------------------------------------------
@@ -138,23 +159,20 @@ Row
 renderValueBox({
   cap_yoy <- paste(prettyNum(trend_yoy[22,9],big.mark=",",digits=2))
   valueBox(cap_yoy, 
-           icon = "fa-sun")
-<<<<<<< HEAD
->>>>>>> parent of 24ec4b5 (Updated county level charts)
-=======
->>>>>>> parent of 24ec4b5 (Updated county level charts)
+     icon = "fa-sun")
 })
 ```
 
-### Total Tree Seedlings Grown for 10 Years
+### Year over Year Project Quantity Growth (2020-2021)
 
 ```{r}
 renderValueBox({
-  total_trees <- prettyNum(totals[1,5],big.mark=",")
-  valueBox(total_trees,
-           icon = "")
+  quant_yoy <- paste(prettyNum(trend_yoy[22,17],big.mark=",",digits=2))
+  valueBox(quant_yoy,
+           icon = "fa-solar-panel")
 })
 ```
+
 
 Row {.tabset}
 -----------------------------------------------------------------------
@@ -163,12 +181,12 @@ Row {.tabset}
 
 ```{r}
 fig1 <- plot_ly(trend, x = ~Year, y = ~`Residential Capacity (Cumulative)`,
-               type = 'bar', name = 'Residential') %>% 
+               type = 'scatter', mode = 'lines+markers', name = 'Residential') %>% 
   add_trace(y = ~`Non-Residential Capacity (Cumulative)`, name = 'Non-Residential') %>%
   add_trace(y = ~`Grid Supply Capacity (Cumulative)`, name = 'Grid Supply') %>%
   layout(yaxis = list(title = "Capacity (MW)"), 
-         xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
-         barmode='stack')
+         xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear', limits=c(2000,2021)),
+         hovermode='x')
 fig1
 ```
 
@@ -176,12 +194,12 @@ fig1
 
 ```{r}
 fig2 <- plot_ly(trend, x = ~Year, y = ~`Residential Capacity`,
-               type = 'bar', name = 'Residential') %>% 
+               type = 'scatter', mode = 'lines+markers', name = 'Residential') %>%
   add_trace(y = ~`Non-Residential Capacity`, name = 'Non-Residential') %>%
   add_trace(y = ~`Grid Supply Capacity`, name = 'Grid Supply') %>%
-  layout(yaxis = list(title = "Capacity (MW)"), 
+  layout(yaxis = list(title = "Capacity (MW)"),
          xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
-         barmode='stack')
+         hovermode='x')
 fig2
 ```
 
@@ -189,12 +207,12 @@ fig2
 
 ```{r}
 fig3 <- plot_ly(trend, x = ~Year, y = ~`Residential Quantity (Cumulative)`,
-               type = 'bar', name = 'Residential') %>% 
+               type = 'scatter', mode = 'lines+markers', name = 'Residential') %>%
   add_trace(y = ~`Non-Residential Quantity (Cumulative)`, name = 'Non-Residential') %>%
   add_trace(y = ~`Grid Supply Quantity (Cumulative)`, name = 'Grid Supply') %>%
-  layout(yaxis = list(title = "Quantity"), 
+  layout(yaxis = list(title = "Quantity"),
          xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
-         barmode='stack')
+         hovermode='x')
 fig3
 ```
 
@@ -202,47 +220,38 @@ fig3
 
 ```{r}
 fig4 <- plot_ly(trend, x = ~Year, y = ~`Residential Quantity`,
-               type = 'bar', name = 'Residential') %>% 
+               type = 'scatter', mode = 'lines+markers', name = 'Residential') %>%
   add_trace(y = ~`Non-Residential Quantity`, name = 'Non-Residential') %>%
   add_trace(y = ~`Grid Supply Quantity`, name = 'Grid Supply') %>%
-  layout(yaxis = list(title = "Quantity"), 
+  layout(yaxis = list(title = "Quantity"),
          xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
-         barmode='stack')
+         hovermode='x')
 fig4
 ```
 
-
-
-
-Current Landscape by County
-=====================================
-
-<!-- Solar Energy in New Jersey {.sidebar} -->
-<!-- ----------------------------------------------------------------------- -->
-<!-- Placeholder - Talk about some stuff -->
-
-Row
+Row {.tabset}
 -----------------------------------------------------------------------
-<<<<<<< HEAD
 
-### Total Current Installed Solar Capacity
+### Overall
 
 ```{r}
-renderValueBox({
-  total_cap <- paste(prettyNum(totals[1,2]/1000,big.mark=",",digits=0)," MW")
-  valueBox(total_cap, 
-           icon = "fa-sun")
+DT::renderDataTable({
+  DT::datatable(trend_trans,
+                class = 'compact nowrap cell-border stripe',
+                extensions = c('Responsive','Scroller','Buttons'), 
+                escape = FALSE, 
+                rownames = FALSE,
+                options = list(bPaginate = FALSE,
+                               ordering=FALSE,
+                               autoWidth = TRUE,
+                               scrollX=TRUE,
+                               searching = FALSE,
+                               buttons = c('colvis', 'excel')))
 })
 ```
 
-### Total Metric Tons of CO~2~ Emissions Avoided
+### Residential
 
-```{r}
-renderValueBox({
-  total_co2 <- paste(prettyNum(totals[1,3],big.mark=","))
-  valueBox(total_co2,
-           icon = "")
-=======
 ```{r}
 DT::renderDataTable({
   DT::datatable(trend_trans,
@@ -253,42 +262,45 @@ DT::renderDataTable({
                 options = list(bPaginate = FALSE,
                                ordering=FALSE,
                                autoWidth = TRUE,
+                               scrollX=TRUE,
   columnDefs = list(list(width = '200px', targets = "_all"),
                     list(className = 'dt-center', targets = "_all"))))
->>>>>>> parent of 85fd945 (Update Da Dashboard.Rmd)
 })
 ```
 
 
-<<<<<<< HEAD
-### Total Passenger Cars Taken Off the Road for 1 Year
+### Non-Residential
 
 ```{r}
-renderValueBox({
-  total_cars <- prettyNum(totals[1,4],big.mark=",")
-  valueBox(total_cars,
-           icon = "")
+DT::renderDataTable({
+  DT::datatable(trend_trans,
+                class = 'cell-border stripe',
+                extensions = 'Responsive', 
+                escape = FALSE, 
+                rownames = FALSE, 
+                options = list(bPaginate = FALSE,
+                               ordering=FALSE,
+                               autoWidth = TRUE,
+                               scrollX=TRUE,
+  columnDefs = list(list(width = '200px', targets = "_all"),
+                    list(className = 'dt-center', targets = "_all"))))
 })
 ```
 
-### Total Tree Seedlings Grown for 10 Years
+### Grid Supply
 
 ```{r}
-renderValueBox({
-  total_trees <- prettyNum(totals[1,5],big.mark=",")
-  valueBox(total_trees,
-           icon = "")
+DT::renderDataTable({
+  DT::datatable(trend_trans,
+                class = 'cell-border stripe',
+                extensions = 'Responsive', 
+                escape = FALSE, 
+                rownames = FALSE, 
+                options = list(bPaginate = FALSE,
+                               ordering=FALSE,
+                               autoWidth = TRUE,
+                               scrollX=TRUE,
+  columnDefs = list(list(width = '200px', targets = "_all"),
+                    list(className = 'dt-center', targets = "_all"))))
 })
 ```
-
-
-Current Residential Landscape
-=====================================
-
-
-
-Current Landscape by County
-=====================================
-=======
-
->>>>>>> parent of 85fd945 (Update Da Dashboard.Rmd)
