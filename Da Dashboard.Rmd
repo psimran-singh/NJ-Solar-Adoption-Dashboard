@@ -22,7 +22,7 @@ library(dygraphs)
 library(nivocal)
 
 # Load in all the data we need
-setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
+setwd("~/Data Viz in R/Data-Visualization-Final-Project/Data Files for Analysis")
 trend <- read_csv('Trend.csv')
 totals <- read_csv('kw_co2_conversions.csv')
 
