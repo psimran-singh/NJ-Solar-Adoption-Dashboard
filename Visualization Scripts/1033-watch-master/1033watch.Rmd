@@ -5,7 +5,7 @@ output:
     theme: sandstone
     orientation: rows
     source_code: "https://github.com/gavinrozzi/1033-watch"
-    vertical_layout: fill
+    vertical_layout: scroll
 runtime: shiny
 
 ---
