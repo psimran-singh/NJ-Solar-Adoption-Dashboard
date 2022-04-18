@@ -20,6 +20,9 @@ library(lubridate)
 library(xts)
 library(dygraphs)
 library(nivocal)
+library(sf)
+library(RColorBrewer)
+library(leaflet)
 
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 
@@ -27,6 +30,8 @@ setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 # Load in all the data we need
 county_level_rates <- read_csv('County_Totals.csv')
 county_level_sectors <- read_csv('County_Sectors.csv')
+load("Overall_Solar_Census_Data_County.Rda")
+overall_county_data <- st_as_sf(Solar_Rates_County)
 
 ## Section 2: Overall Trends ## 
 # Load in all the data we need
@@ -89,14 +94,14 @@ renderPlotly(
 
 fig <- plot_ly(county_level_sectors0, 
                x = county_level_sectors0$`County`, 
-               y = county_level_sectors0$`cap_res`,
+               y = (county_level_sectors0$`cap_res`/1000),
                type = "bar", 
                name = "Residential",
                marker = list(color = colors$res_color))  %>%
-  add_trace(y = county_level_sectors0$`cap_nonres`,
+  add_trace(y = (county_level_sectors0$`cap_nonres`/1000),
             name = 'Non-Residential',
             marker = list(color = colors$nonres_color))  %>%
-  add_trace(y = county_level_sectors0$`cap_gs`,
+  add_trace(y = (county_level_sectors0$`cap_gs`/1000),
             name = 'Grid Supply',
             marker = list(color = colors$gs_color))  %>%
   layout(yaxis = list(title = "Capacity (MW)"), 

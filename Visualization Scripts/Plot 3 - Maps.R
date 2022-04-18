@@ -1,31 +1,18 @@
----
-title: "tab 3 visualizations"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-```{r libraries}
 library(tidyverse)
 library(sf)
 library(RColorBrewer)
 library(leaflet)
-```
 
 
 # Load Data
-```{r data}
+
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 load("Res_Solar_Census_Data_County.Rda")
 load("Overall_Solar_Census_Data_County.Rda")
 overall_county_data <- st_as_sf(Solar_Rates_County)
 res_county_data <- st_as_sf(Solar_Res_County)
-```
 
-# Tab 1 map of overall capacity by county
-```{r fig1}
+
 pal <- colorBin(palette = "Reds", domain = overall_county_data$CAPACITY) # split colors from white to red into 9 even bins
 
 leaflet() %>%
@@ -42,10 +29,8 @@ leaflet() %>%
             title = "Capacity", # legend title
             opacity = 1.0) # the transparency of the legend
 
-```
 
 # Tab 2 map of residential capacity by county
-```{r fig2}
 pal2 <- colorBin(palette = "Reds", domain = res_county_data$CAPACITY) # split colors from white to red into 9 even bins
 
 leaflet() %>%
@@ -62,11 +47,9 @@ leaflet() %>%
             title = "Capacity", # legend title
             opacity = 1.0) # the transparency of the legend
 
-```
 
 # Tab 2 map of residential adoption rate by county
-```{r fig3}
-pal3 <- colorBin(palette = "Reds", domain = res_county_data$Adoption_Rate) # split colors from white to red into 9 even bins
+pal3 <- colorBin(palette = "Blues", domain = res_county_data$Adoption_Rate) # split colors from white to red into 9 even bins
 
 leaflet() %>%
   addPolygons(data = res_county_data,
@@ -82,5 +65,4 @@ leaflet() %>%
             title="Adoption Rates", # legend title
             opacity = 1.0) # the transparency of the legend
 
-```
 
