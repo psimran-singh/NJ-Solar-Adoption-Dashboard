@@ -21,6 +21,16 @@ library(xts)
 library(dygraphs)
 library(nivocal)
 
+<<<<<<< HEAD
+=======
+setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
+
+## Section 1: Overall Landscape ##
+# Load in all the data we need
+county_level_rates <- read_csv('County_Totals.csv')
+
+## Section 2: Overall Trends ## 
+>>>>>>> parent of 24ec4b5 (Updated county level charts)
 # Load in all the data we need
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 trend <- read_csv('Trend.csv')
@@ -30,15 +40,36 @@ totals <- read_csv('kw_co2_conversions.csv')
 ```
 
 
+<<<<<<< HEAD
 Overall Trends
 =====================================
 
 <!-- Solar Energy in New Jersey {.sidebar} -->
 <!-- ----------------------------------------------------------------------- -->
 <!-- Placeholder - Talk about some stuff -->
-
-Row
+=======
+{.sidebar}
 -----------------------------------------------------------------------
+
+Select your county below.
+
+```{r}
+selectInput("County", "County:", choices = distinct(county_level_rates, `County`))
+# renderUI({county_name <- county_level_rates %>% filter(`County` == input$County) %>% .$county.name
+```
+>>>>>>> parent of 24ec4b5 (Updated county level charts)
+
+
+<!-- ```{r} -->
+<!-- renderUI({state_name <- state_data %>% filter(state.abb == input$state) %>% .$state.name -->
+<!-- state_equipment <- data1033 %>% filter(State == input$state) -->
+<!-- top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1) -->
+<!-- tags$h2(paste(state_name, 'at a glance') -->
+<!-- )}) -->
+<!-- renderUI({state_equipment <- data1033 %>% filter(State == input$state) -->
+<!-- top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1) -->
+<!-- tags$p(paste('The most militarized agency was', top_agency$`Station Name (LEA)`,'which received',top_agency$n, 'shipments.'))}) -->
+<!-- ``` -->
 
 ### Total Current Installed Solar Capacity
 
@@ -61,6 +92,7 @@ renderValueBox({
 ```
 
 
+<<<<<<< HEAD
 ### Total Passenger Cars Taken Off the Road for 1 Year
 
 ```{r}
@@ -68,6 +100,26 @@ renderValueBox({
   total_cars <- prettyNum(totals[1,4],big.mark=",")
   valueBox(total_cars,
            icon = "")
+=======
+
+Overall Trends
+=====================================
+
+<!-- Solar Energy in New Jersey {.sidebar} -->
+<!-- ----------------------------------------------------------------------- -->
+<!-- Placeholder - Talk about some stuff -->
+
+Row
+-----------------------------------------------------------------------
+
+### Year over Year Installed Capacity Growth (2020-2021)
+
+```{r}
+renderValueBox({
+  cap_yoy <- paste(prettyNum(trend_yoy[22,9],big.mark=",",digits=2))
+  valueBox(cap_yoy, 
+           icon = "fa-sun")
+>>>>>>> parent of 24ec4b5 (Updated county level charts)
 })
 ```
 
