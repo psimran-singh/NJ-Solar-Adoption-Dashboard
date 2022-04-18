@@ -44,10 +44,13 @@ totals <- read_csv('kw_co2_conversions.csv')
 Overall Trends
 =====================================
 
+<<<<<<< HEAD
 <!-- Solar Energy in New Jersey {.sidebar} -->
 <!-- ----------------------------------------------------------------------- -->
 <!-- Placeholder - Talk about some stuff -->
 =======
+=======
+>>>>>>> parent of 24ec4b5 (Updated county level charts)
 {.sidebar}
 -----------------------------------------------------------------------
 
@@ -59,6 +62,20 @@ selectInput("County", "County:", choices = distinct(county_level_rates, `County`
 ```
 >>>>>>> parent of 24ec4b5 (Updated county level charts)
 
+<<<<<<< HEAD
+=======
+
+<!-- ```{r} -->
+<!-- renderUI({state_name <- state_data %>% filter(state.abb == input$state) %>% .$state.name -->
+<!-- state_equipment <- data1033 %>% filter(State == input$state) -->
+<!-- top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1) -->
+<!-- tags$h2(paste(state_name, 'at a glance') -->
+<!-- )}) -->
+<!-- renderUI({state_equipment <- data1033 %>% filter(State == input$state) -->
+<!-- top_agency <- state_equipment %>% group_by(`Station Name (LEA)`) %>% tally() %>% arrange(desc(n)) %>% top_n(1) -->
+<!-- tags$p(paste('The most militarized agency was', top_agency$`Station Name (LEA)`,'which received',top_agency$n, 'shipments.'))}) -->
+<!-- ``` -->
+>>>>>>> parent of 24ec4b5 (Updated county level charts)
 
 <!-- ```{r} -->
 <!-- renderUI({state_name <- state_data %>% filter(state.abb == input$state) %>% .$state.name -->
@@ -93,6 +110,7 @@ renderValueBox({
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ### Total Passenger Cars Taken Off the Road for 1 Year
 
 ```{r}
@@ -101,6 +119,8 @@ renderValueBox({
   valueBox(total_cars,
            icon = "")
 =======
+=======
+>>>>>>> parent of 24ec4b5 (Updated county level charts)
 
 Overall Trends
 =====================================
@@ -119,6 +139,9 @@ renderValueBox({
   cap_yoy <- paste(prettyNum(trend_yoy[22,9],big.mark=",",digits=2))
   valueBox(cap_yoy, 
            icon = "fa-sun")
+<<<<<<< HEAD
+>>>>>>> parent of 24ec4b5 (Updated county level charts)
+=======
 >>>>>>> parent of 24ec4b5 (Updated county level charts)
 })
 ```
