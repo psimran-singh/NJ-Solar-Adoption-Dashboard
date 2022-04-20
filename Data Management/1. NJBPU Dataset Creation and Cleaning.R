@@ -94,4 +94,6 @@ Solar_Res_Zip <- Solar_Data1 %>%
   group_by(ZIP) %>%
   summarize(CAPACITY = sum(SYSTEM_SIZE,na.rm=TRUE), COUNT=n())
 
+remove(Solar_Data1)
+
 

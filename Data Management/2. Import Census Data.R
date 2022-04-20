@@ -40,10 +40,10 @@ Solar_Res_County$Total_Occ_House <- county_total_house$estimate[match(Solar_Res_
 Solar_Res_County$Adoption_Rate <- Solar_Res_County$COUNT/Solar_Res_County$Total_Occ_House
 
 # combine the zip demographics with solar data
-Solar_Res_Zip$Income <- zip_income$estimate[match(Solar_Res_Zip$ZIP_CODE,zip_income$GEOID)]
-Solar_Res_Zip$Perc_White <- zip_perc_white$estimate[match(Solar_Res_Zip$ZIP_CODE,zip_perc_white$GEOID)]
-Solar_Res_Zip$Perc_Male <- zip_perc_male$estimate[match(Solar_Res_Zip$ZIP_CODE,zip_perc_male$GEOID)]
-Solar_Res_Zip$Total_Occ_House <- zip_total_house$estimate[match(Solar_Res_Zip$ZIP_CODE,zip_total_house$GEOID)]
+Solar_Res_Zip$Income <- zip_income$estimate[match(Solar_Res_Zip$ZIP,zip_income$GEOID)]
+Solar_Res_Zip$Perc_White <- zip_perc_white$estimate[match(Solar_Res_Zip$ZIP,zip_perc_white$GEOID)]
+Solar_Res_Zip$Perc_Male <- zip_perc_male$estimate[match(Solar_Res_Zip$ZIP,zip_perc_male$GEOID)]
+Solar_Res_Zip$Total_Occ_House <- zip_total_house$estimate[match(Solar_Res_Zip$ZIP,zip_total_house$GEOID)]
 Solar_Res_Zip$Adoption_Rate <- Solar_Res_Zip$COUNT/Solar_Res_Zip$Total_Occ_House
 
 # combine zip housing data
@@ -58,13 +58,17 @@ remove(zip_income, zip_perc_male, zip_perc_white, zip_total_house, zip_owner_hou
 
 # final datasets
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
-write.csv(zip_housing, "Census_Housing_Data_by_ZIP.csv")
 
-write.csv(Solar_Res_Zip,"Residential_Solar_ZIP.csv", row.names = TRUE)
-write.csv(Solar_Res_County, 'Residential_Solar_County.csv')
+#Residential Solar + Census Data Table for Zip Code Level Statistical Analysis
+write.csv(Solar_Res_Zip,"Residential_Solar_ZIP.csv")
 
-Solar_Rates_County$geometry <- Solar_Res_County$geometry[match(Solar_Rates_County$COUNTY,Solar_Res_County$COUNTY)]
-write.csv(Solar_Rates_County, 'Overall_Solar_Census_Data_County.csv')
+#Saving as R object will preserve geometry
+#Residential Solar by County
+save(Solar_Res_County, file = 'Residential_Solar_County.Rda')
+
+#Overall Solar by County
+Solar_All_County$geometry <- Solar_Res_County$geometry[match(Solar_All_County$COUNTY,Solar_Res_County$COUNTY)]
+save(Solar_All_County, file = 'Overall_Solar_County.Rda')
 
 
 
