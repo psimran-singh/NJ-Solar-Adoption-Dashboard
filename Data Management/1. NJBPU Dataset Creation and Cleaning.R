@@ -78,10 +78,16 @@ remove(Solar_Data0)
 
 ### STEP 3: AGGREGATE DATA AND GET FINAL DATASETS ###
 
-#Aggregate by COUNTY for all CUSTOMER_TYPE
+#Aggregate COUNTY, CUSTOMER_TYPE, THIRD_PARTY_OWNERSHIP for All Customer Types
 Solar_All_County <- Solar_Data1 %>% 
   group_by(COUNTY, CUSTOMER_TYPE, THIRD_PARTY_OWNERSHIP) %>%
   summarize(CAPACITY = sum(SYSTEM_SIZE,na.rm=TRUE), COUNT=n())
+
+#Aggregate by COUNTY only for All Customer Types
+Solar_CapCount_County <- Solar_Data1 %>%
+  group_by(COUNTY) %>%
+  summarize(CAPACITY = sum(SYSTEM_SIZE, na.rm=TRUE), COUNT=n())
+
 #Aggregate by COUNTY for only RESIDENTIAL
 Solar_Res_County <- Solar_Data1 %>% 
   filter(CUSTOMER_TYPE=="Residential") %>%

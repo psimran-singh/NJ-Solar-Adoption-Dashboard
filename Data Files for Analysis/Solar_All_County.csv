@@ -1,0 +1,342 @@
+"","COUNTY","CUSTOMER_TYPE","THIRD_PARTY_OWNERSHIP","CAPACITY","COUNT"
+"1","Atlantic","Commercial","No",37175.204,258
+"2","Atlantic","Commercial","Yes",14722.6,85
+"3","Atlantic","Farm","No",477.37,14
+"4","Atlantic","Farm","Yes",77.245,4
+"5","Atlantic","Government Facility","No",404.73,2
+"6","Atlantic","Government Facility","Yes",882.73,5
+"7","Atlantic","Municipality","No",3288.013,9
+"8","Atlantic","Municipality","Yes",3815.14,8
+"9","Atlantic","Non Profit","No",654.695,21
+"10","Atlantic","Non Profit","Yes",3470.72,51
+"11","Atlantic","Public University","No",728.658,4
+"12","Atlantic","Public University","Yes",2491.42,3
+"13","Atlantic","Residential","No",25090.416,2617
+"14","Atlantic","Residential","Yes",76186.384,8765
+"15","Atlantic","School Other","No",468.3,1
+"16","Atlantic","School Other","Yes",90.83,2
+"17","Atlantic","School Public K-12","No",3893.23,19
+"18","Atlantic","School Public K-12","Yes",6836.69,10
+"19","Atlantic","SUNLIT","No",21.31,1
+"20","Bergen","Commercial","No",43349.052,276
+"21","Bergen","Commercial","Yes",38178.35,122
+"22","Bergen","Farm","No",50.63,1
+"23","Bergen","Government Facility","No",153.96,3
+"24","Bergen","Government Facility","Yes",1959.36,2
+"25","Bergen","Municipality","No",1073.552,18
+"26","Bergen","Municipality","Yes",1469.27,10
+"27","Bergen","Non Profit","No",1159.969,23
+"28","Bergen","Non Profit","Yes",1770.275,32
+"29","Bergen","Public University","No",15.77,2
+"30","Bergen","Public University","Yes",5202.26,3
+"31","Bergen","Residential","No",17783.953,2104
+"32","Bergen","Residential","Yes",33417.908,4796
+"33","Bergen","School Charter","Yes",209.3,1
+"34","Bergen","School Other","No",110.674,3
+"35","Bergen","School Other","Yes",1203.48,8
+"36","Bergen","School Public K-12","No",1470.71,15
+"37","Bergen","School Public K-12","Yes",9068.93,34
+"38","Burlington","Commercial","No",107292.439,278
+"39","Burlington","Commercial","Yes",158882.361,160
+"40","Burlington","Farm","No",705.667,22
+"41","Burlington","Farm","Yes",186.36,3
+"42","Burlington","Government Facility","No",10793.538,7
+"43","Burlington","Government Facility","Yes",1080.52,6
+"44","Burlington","Municipality","No",2093.67,11
+"45","Burlington","Municipality","Yes",2843.315,4
+"46","Burlington","Non Profit","No",686.083,23
+"47","Burlington","Non Profit","Yes",3661.325,32
+"48","Burlington","Public University","No",32.16,1
+"49","Burlington","Residential","No",32844.242,3443
+"50","Burlington","Residential","Yes",73646.478,8580
+"51","Burlington","School Other","Yes",207.9,1
+"52","Burlington","School Public K-12","No",3824.079,17
+"53","Burlington","School Public K-12","Yes",5810.107,17
+"54","Burlington","SUNLIT","No",50.096,4
+"55","Camden","Commercial","No",43663.693,229
+"56","Camden","Commercial","Yes",49478.516,89
+"57","Camden","Farm","No",11.62,2
+"58","Camden","Government Facility","No",679.4,2
+"59","Camden","Government Facility","Yes",18254.64,6
+"60","Camden","Municipality","No",3350.631,9
+"61","Camden","Municipality","Yes",2194.46,5
+"62","Camden","Non Profit","No",176.375,10
+"63","Camden","Non Profit","Yes",2945.505,27
+"64","Camden","Residential","No",25165.971,2773
+"65","Camden","Residential","Yes",70948.444,8715
+"66","Camden","School Other","No",879.35,3
+"67","Camden","School Other","Yes",1978.64,9
+"68","Camden","School Public K-12","No",1906.908,9
+"69","Camden","School Public K-12","Yes",17613.175,38
+"70","Camden","SUNLIT","No",241.28,7
+"71","Cape May","Commercial","No",4707.298,123
+"72","Cape May","Commercial","Yes",4018.865,67
+"73","Cape May","Farm","No",86.63,3
+"74","Cape May","Government Facility","No",7.59,1
+"75","Cape May","Government Facility","Yes",26,3
+"76","Cape May","Municipality","No",212.781,7
+"77","Cape May","Municipality","Yes",887.746,9
+"78","Cape May","Non Profit","No",179.835,11
+"79","Cape May","Non Profit","Yes",1412.005,31
+"80","Cape May","Public University","Yes",572.88,1
+"81","Cape May","Residential","No",10012.311,1133
+"82","Cape May","Residential","Yes",32968.262,3805
+"83","Cape May","School Public K-12","No",278.005,1
+"84","Cape May","School Public K-12","Yes",5796.125,15
+"85","Cumberland","Commercial","No",39106.252,129
+"86","Cumberland","Commercial","Yes",43552.485,33
+"87","Cumberland","Farm","No",153.34,8
+"88","Cumberland","Farm","Yes",2080.09,4
+"89","Cumberland","Government Facility","Yes",31.16,1
+"90","Cumberland","Municipality","No",48.62,2
+"91","Cumberland","Municipality","Yes",3544.42,6
+"92","Cumberland","Non Profit","No",282.775,9
+"93","Cumberland","Non Profit","Yes",393.34,13
+"94","Cumberland","Residential","No",7661.325,808
+"95","Cumberland","Residential","Yes",27338.648,3057
+"96","Cumberland","School Other","Yes",138.545,3
+"97","Cumberland","School Public K-12","No",450.03,2
+"98","Cumberland","School Public K-12","Yes",260,1
+"99","Essex","Commercial","No",39402.187,156
+"100","Essex","Commercial","Yes",20298.313,102
+"101","Essex","Government Facility","No",213.39,5
+"102","Essex","Government Facility","Yes",1968.825,7
+"103","Essex","Municipality","No",256.824,7
+"104","Essex","Municipality","Yes",5694.57,3
+"105","Essex","Non Profit","No",193.156,6
+"106","Essex","Non Profit","Yes",562.505,12
+"107","Essex","Public University","No",93.22,4
+"108","Essex","Residential","No",10892.549,1477
+"109","Essex","Residential","Yes",21935.417,3377
+"110","Essex","School Other","No",2.04,1
+"111","Essex","School Other","Yes",389.27,2
+"112","Essex","School Public K-12","No",216.48,2
+"113","Essex","School Public K-12","Yes",6394.53,25
+"114","Essex","SUNLIT","No",295.481,8
+"115","Gloucester","Commercial","No",36479.391,142
+"116","Gloucester","Commercial","Yes",47165.08,55
+"117","Gloucester","Farm","No",99.146,4
+"118","Gloucester","Farm","Yes",153.94,4
+"119","Gloucester","Government Facility","No",49.92,1
+"120","Gloucester","Government Facility","Yes",364.5,1
+"121","Gloucester","Municipality","No",110.71,4
+"122","Gloucester","Municipality","Yes",1678.655,15
+"123","Gloucester","Non Profit","No",600.17,10
+"124","Gloucester","Non Profit","Yes",3000.79,38
+"125","Gloucester","Public University","No",15.59,2
+"126","Gloucester","Residential","No",29383.381,2931
+"127","Gloucester","Residential","Yes",62520.798,6929
+"128","Gloucester","School Other","No",110.19,3
+"129","Gloucester","School Other","Yes",349.53,9
+"130","Gloucester","School Public K-12","No",818.542,4
+"131","Gloucester","School Public K-12","Yes",16682.45,29
+"132","Gloucester","SUNLIT","No",20.24,1
+"133","Hudson","Commercial","No",67191.906,151
+"134","Hudson","Commercial","Yes",24695.779,67
+"135","Hudson","Government Facility","No",4.576,1
+"136","Hudson","Government Facility","Yes",4547.74,4
+"137","Hudson","Municipality","No",1456.391,4
+"138","Hudson","Municipality","Yes",897.82,13
+"139","Hudson","Non Profit","No",983.316,10
+"140","Hudson","Non Profit","Yes",231.47,4
+"141","Hudson","Private University","No",235.065,2
+"142","Hudson","Residential","No",3167.474,483
+"143","Hudson","Residential","Yes",8692.987,1385
+"144","Hudson","School Other","No",166.848,2
+"145","Hudson","School Other","Yes",383.13,4
+"146","Hudson","School Public K-12","No",4651.93,28
+"147","Hudson","School Public K-12","Yes",1911.565,15
+"148","Hudson","SUNLIT","No",20.304,1
+"149","Hunterdon","Commercial","No",80559.624,97
+"150","Hunterdon","Commercial","Yes",7260.08,19
+"151","Hunterdon","Farm","No",714.502,24
+"152","Hunterdon","Farm","Yes",376.325,10
+"153","Hunterdon","Government Facility","No",28.08,1
+"154","Hunterdon","Municipality","No",61.2,2
+"155","Hunterdon","Municipality","Yes",28.8,1
+"156","Hunterdon","Non Profit","No",108.645,5
+"157","Hunterdon","Non Profit","Yes",10.92,1
+"158","Hunterdon","Residential","No",12877.242,1223
+"159","Hunterdon","Residential","Yes",7403.769,672
+"160","Hunterdon","School Other","Yes",53.22,2
+"161","Hunterdon","School Public K-12","Yes",4018.56,9
+"162","Hunterdon","SUNLIT","No",55.08,18
+"163","Mercer","Commercial","No",63872.676,229
+"164","Mercer","Commercial","Yes",62448.686,94
+"165","Mercer","Farm","No",365.89,11
+"166","Mercer","Farm","Yes",60.58,2
+"167","Mercer","Government Facility","No",2018.826,14
+"168","Mercer","Government Facility","Yes",394.02,4
+"169","Mercer","Municipality","No",569.86,5
+"170","Mercer","Municipality","Yes",816.04,3
+"171","Mercer","Non Profit","No",1826.875,18
+"172","Mercer","Non Profit","Yes",2112.51,12
+"173","Mercer","Private University","Yes",739.2,1
+"174","Mercer","Public University","No",3.6,2
+"175","Mercer","Residential","No",19286.147,2088
+"176","Mercer","Residential","Yes",24029.131,3035
+"177","Mercer","School Charter","Yes",139.84,1
+"178","Mercer","School Other","No",918.28,3
+"179","Mercer","School Other","Yes",21523.821,8
+"180","Mercer","School Public K-12","No",1805.956,13
+"181","Mercer","School Public K-12","Yes",2123.59,7
+"182","Mercer","SUNLIT","No",170.74,7
+"183","Middlesex","Commercial","No",181169.343,358
+"184","Middlesex","Commercial","Yes",132764.967,179
+"185","Middlesex","Farm","No",108.436,3
+"186","Middlesex","Government Facility","No",287.208,2
+"187","Middlesex","Government Facility","Yes",6498.69,6
+"188","Middlesex","Municipality","No",1439.707,16
+"189","Middlesex","Municipality","Yes",13725.65,13
+"190","Middlesex","Non Profit","No",609.997,15
+"191","Middlesex","Non Profit","Yes",640.98,11
+"192","Middlesex","Public University","No",1346.8,1
+"193","Middlesex","Public University","Yes",9117.16,3
+"194","Middlesex","Residential","No",34492.557,4018
+"195","Middlesex","Residential","Yes",65208.222,8629
+"196","Middlesex","School Other","No",175,1
+"197","Middlesex","School Other","Yes",233.375,3
+"198","Middlesex","School Public K-12","No",5188.794,30
+"199","Middlesex","School Public K-12","Yes",16646.455,45
+"200","Monmouth","Commercial","No",82760.456,345
+"201","Monmouth","Commercial","Yes",62658.902,160
+"202","Monmouth","Farm","No",244.755,15
+"203","Monmouth","Farm","Yes",41.18,1
+"204","Monmouth","Government Facility","No",29547.014,5
+"205","Monmouth","Government Facility","Yes",322.69,4
+"206","Monmouth","Municipality","No",1599.367,12
+"207","Monmouth","Municipality","Yes",2301.61,10
+"208","Monmouth","Non Profit","No",4553.501,28
+"209","Monmouth","Non Profit","Yes",7705.77,38
+"210","Monmouth","Private University","No",118.56,1
+"211","Monmouth","Private University","Yes",243.88,4
+"212","Monmouth","Public University","No",324.48,1
+"213","Monmouth","Residential","No",32122.99,3433
+"214","Monmouth","Residential","Yes",68936.923,8179
+"215","Monmouth","School Other","No",237.373,7
+"216","Monmouth","School Other","Yes",699.98,4
+"217","Monmouth","School Public K-12","No",2512.239,13
+"218","Monmouth","School Public K-12","Yes",19907.39,67
+"219","Monmouth","SUNLIT","No",20.16,1
+"220","Morris","Commercial","No",34839.872,174
+"221","Morris","Commercial","Yes",44266.506,84
+"222","Morris","Farm","No",22.08,1
+"223","Morris","Government Facility","No",624.91,1
+"224","Morris","Government Facility","Yes",254.13,1
+"225","Morris","Municipality","No",704.75,3
+"226","Morris","Municipality","Yes",2273.415,2
+"227","Morris","Non Profit","No",207.2,10
+"228","Morris","Non Profit","Yes",702.75,7
+"229","Morris","Private University","No",16.632,1
+"230","Morris","Public University","No",28.675,1
+"231","Morris","Public University","Yes",3435.85,1
+"232","Morris","Residential","No",11967.229,1273
+"233","Morris","Residential","Yes",18263.232,2340
+"234","Morris","School Other","No",1690.51,5
+"235","Morris","School Other","Yes",789.5,3
+"236","Morris","School Public K-12","No",599.04,2
+"237","Morris","School Public K-12","Yes",3703.59,26
+"238","Morris","SUNLIT","No",92.736,2
+"239","Ocean","Commercial","No",28849.176,253
+"240","Ocean","Commercial","Yes",83200.454,106
+"241","Ocean","Farm","No",58.48,4
+"242","Ocean","Government Facility","No",202.76,3
+"243","Ocean","Government Facility","Yes",14912.55,7
+"244","Ocean","Municipality","No",660.396,10
+"245","Ocean","Municipality","Yes",5851.615,9
+"246","Ocean","Non Profit","No",1857.966,30
+"247","Ocean","Non Profit","Yes",5808.21,79
+"248","Ocean","Private University","Yes",615.45,5
+"249","Ocean","Public University","No",13.16,1
+"250","Ocean","Residential","No",38260.177,4117
+"251","Ocean","Residential","Yes",132462.318,15844
+"252","Ocean","School Other","No",297.95,3
+"253","Ocean","School Other","Yes",2112.025,15
+"254","Ocean","School Public K-12","No",5224.121,23
+"255","Ocean","School Public K-12","Yes",16208.495,41
+"256","Ocean","SUNLIT","No",187.47,2
+"257","Passaic","Commercial","No",37814.094,175
+"258","Passaic","Commercial","Yes",8461.508,43
+"259","Passaic","Government Facility","Yes",241.5,1
+"260","Passaic","Non Profit","No",259.486,12
+"261","Passaic","Non Profit","Yes",260.41,8
+"262","Passaic","Public University","No",1022.43,4
+"263","Passaic","Public University","Yes",1994.33,5
+"264","Passaic","Residential","No",8784.392,1087
+"265","Passaic","Residential","Yes",20077.898,2773
+"266","Passaic","School Other","Yes",258.64,1
+"267","Passaic","School Public K-12","No",452.4,1
+"268","Passaic","School Public K-12","Yes",6294.665,26
+"269","Passaic","SUNLIT","No",137.64,2
+"270","Salem","Commercial","No",6437.3,62
+"271","Salem","Commercial","Yes",23312.11,32
+"272","Salem","Farm","No",900.199,19
+"273","Salem","Farm","Yes",43.24,1
+"274","Salem","Municipality","No",134.55,5
+"275","Salem","Municipality","Yes",507.6,9
+"276","Salem","Non Profit","No",105.49,5
+"277","Salem","Non Profit","Yes",1117.11,37
+"278","Salem","Public University","Yes",515.57,1
+"279","Salem","Residential","No",9101.87,798
+"280","Salem","Residential","Yes",21584.785,2042
+"281","Salem","School Other","Yes",132.82,4
+"282","Salem","School Public K-12","No",271.25,3
+"283","Salem","School Public K-12","Yes",2239.83,6
+"284","Salem","SUNLIT","No",99.792,1
+"285","Somerset","Commercial","No",55986.156,192
+"286","Somerset","Commercial","Yes",43656.087,63
+"287","Somerset","Farm","No",227.256,9
+"288","Somerset","Farm","Yes",917.4,2
+"289","Somerset","Government Facility","No",189,1
+"290","Somerset","Government Facility","Yes",73.65,3
+"291","Somerset","Municipality","No",371.36,3
+"292","Somerset","Municipality","Yes",2936.595,16
+"293","Somerset","Non Profit","No",3215.1,22
+"294","Somerset","Non Profit","Yes",2513.025,23
+"295","Somerset","Public University","Yes",490.49,2
+"296","Somerset","Residential","No",20831.114,2202
+"297","Somerset","Residential","Yes",19343.045,2425
+"298","Somerset","School Other","No",186.336,3
+"299","Somerset","School Other","Yes",843.92,2
+"300","Somerset","School Public K-12","No",734.97,6
+"301","Somerset","School Public K-12","Yes",8096.16,30
+"302","Somerset","SUNLIT","No",111.032,4
+"303","Sussex","Commercial","No",35822.377,71
+"304","Sussex","Commercial","Yes",7407.557,21
+"305","Sussex","Farm","No",7125.57,8
+"306","Sussex","Farm","Yes",82.8,2
+"307","Sussex","Municipality","No",2138.885,6
+"308","Sussex","Municipality","Yes",195.14,3
+"309","Sussex","Non Profit","No",400.815,9
+"310","Sussex","Non Profit","Yes",309.325,6
+"311","Sussex","Public University","Yes",1405.99,10
+"312","Sussex","Residential","No",5371.891,512
+"313","Sussex","Residential","Yes",7964.156,828
+"314","Sussex","School Other","No",92.69,1
+"315","Sussex","School Public K-12","Yes",9010.3,25
+"316","Union","Commercial","No",43822.921,193
+"317","Union","Commercial","Yes",23189.889,64
+"318","Union","Government Facility","Yes",136.4,3
+"319","Union","Municipality","No",199.64,2
+"320","Union","Municipality","Yes",748.695,12
+"321","Union","Non Profit","No",251.73,7
+"322","Union","Non Profit","Yes",2465.68,12
+"323","Union","Residential","No",12122.217,1569
+"324","Union","Residential","Yes",33050.852,4967
+"325","Union","School Other","Yes",1421.29,6
+"326","Union","School Public K-12","No",1212.05,8
+"327","Union","School Public K-12","Yes",7124.51,32
+"328","Warren","Commercial","No",31534.306,68
+"329","Warren","Commercial","Yes",42564.9,21
+"330","Warren","Farm","No",20418.61,16
+"331","Warren","Farm","Yes",126.23,3
+"332","Warren","Government Facility","Yes",1203.68,2
+"333","Warren","Municipality","No",364.08,8
+"334","Warren","Non Profit","No",112.665,7
+"335","Warren","Non Profit","Yes",27,1
+"336","Warren","Residential","No",4534.088,473
+"337","Warren","Residential","Yes",7226.928,779
+"338","Warren","School Other","No",21.12,1
+"339","Warren","School Other","Yes",2053.62,4
+"340","Warren","School Public K-12","No",500.39,2
+"341","Warren","School Public K-12","Yes",2730.3,6

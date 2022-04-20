@@ -30,15 +30,13 @@ setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 # Load in all the data we need
 county_level_rates <- read_csv('County_Totals.csv')
 county_level_sectors <- read_csv('County_Sectors.csv')
-load("Overall_Solar_Census_Data_County.Rda")
-overall_county_data <- st_as_sf(Solar_Rates_County)
+
 
 ## Section 2: Overall Trends ## 
 # Load in all the data we need
 trend <- read_csv('Trend.csv')
 trend_trans <- read_csv('Trend_Transposed.csv')
 trend_yoy <- read_csv('Trend_Percents.csv')
-co2 <- read_csv('KW_CO2_Conversions.csv')
 
 ```
 

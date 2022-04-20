@@ -1,6 +1,7 @@
 # libraries
 library(tidyverse)
 library(tidycensus)
+library(sf)
 
 # set up census 
 # census_api_key("", install = TRUE)
@@ -59,17 +60,21 @@ remove(zip_income, zip_perc_male, zip_perc_white, zip_total_house, zip_owner_hou
 # final datasets
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 
-#Residential Solar + Census Data Table for Zip Code Level Statistical Analysis
+#Residential Solar and Census Data Table for Zip Code Level Statistical Analysis
 write.csv(Solar_Res_Zip,"Residential_Solar_ZIP.csv")
 
-#Saving as R object will preserve geometry
+#Overall Solar and Categorization Data by County
+write.csv(Solar_All_County,"Solar_All_County.csv")
+
+#Saving as R object will preserve geometry, we will use these tables to map
 #Residential Solar by County
-save(Solar_Res_County, file = 'Residential_Solar_County.Rda')
+save(Solar_Res_County, file = 'Solar_Res_County.Rda')
 
 #Overall Solar by County
-Solar_All_County$geometry <- Solar_Res_County$geometry[match(Solar_All_County$COUNTY,Solar_Res_County$COUNTY)]
-save(Solar_All_County, file = 'Overall_Solar_County.Rda')
+Solar_CapCount_County$geometry <- Solar_Res_County$geometry[match(Solar_CapCount_County$COUNTY,Solar_Res_County$COUNTY)]
+save(Solar_CapCount_County, file = 'Solar_CapCount_County.Rda')
 
+remove(Solar_CapCount_County, Solar_All_County,Solar_Res_County,Solar_Res_Zip,zip_housing)
 
 
 
