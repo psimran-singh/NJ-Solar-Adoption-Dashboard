@@ -2,8 +2,8 @@
 library(tidyverse)
 library(tidycensus)
 
-# set up census
-census_api_key("", install = TRUE)
+# set up census 
+# census_api_key("", install = TRUE)
 
 # county code dictionary
 county_dict <- c("1" = "Sussex","2"	= "Warren","3" = "Morris","4" = "Hunterdon","5" = "Somerset","6" = "Passaic","7" = "Bergen","8" = "Hudson","9" = "Essex","10" = "Union","11" = "Middlesex","12" = "Mercer","13" = "Burlington","14" = "Camden","15" = "Gloucester","16" = "Salem","17" = "Monmouth","18" = "Ocean","19" = "Atlantic","20" = "Cumberland","21" = "Cape May")
