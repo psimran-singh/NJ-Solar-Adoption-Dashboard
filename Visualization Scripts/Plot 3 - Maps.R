@@ -9,7 +9,7 @@ library(leaflet)
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 load("Res_Solar_Census_Data_County.Rda")
 load("Overall_Solar_Census_Data_County.Rda")
-overall_county_data <- st_as_sf(Solar_Rates_County)
+overall_county_data <- st_as_sf(county_level_sectors0)
 res_county_data <- st_as_sf(Solar_Res_County)
 
 
