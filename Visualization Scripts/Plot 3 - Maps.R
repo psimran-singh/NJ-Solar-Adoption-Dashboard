@@ -7,29 +7,27 @@ library(leaflet)
 # Load Data
 
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
-load("Solar_CapCount_County.Rda")
+load("Solar_All_County.Rda")
 load("Solar_Res_County.Rda")
 
-Solar_All_County <- read_csv("Solar_All_County.csv")
-
-Solar_CapCount_County <- st_as_sf(Solar_CapCount_County)
+Solar_All_County <- st_as_sf(Solar_All_County)
 Solar_Res_County <- st_as_sf(Solar_Res_County)
 
 
-pal <- colorBin(palette = "Reds", domain = Solar_All_County_Geo$CAPACITY) # split colors from white to red into 9 even bins
+pal <- colorBin(palette = "Reds", domain = Solar_All_County$capacity_mw) # split colors from white to red into 9 even bins
 
 leaflet() %>%
-  addPolygons(data = Solar_All_County_Geo,
-              label = ~COUNTY, # when you hover over the polygon, it will label the svi
+  addPolygons(data = Solar_All_County,
+              label = ~County, # when you hover over the polygon, it will label the svi
               color = "gray", # the color of the border
-              fillColor = ~pal(Solar_All_County_Geo$CAPACITY), # the colors inside the polygons
+              fillColor = ~pal(Solar_All_County$capacity_mw), # the colors inside the polygons
               weight = 1.0, # the thickness of the border lines
               opacity = 1.0, # the transparency of the border lines
               fillOpacity = 0.8) %>%
-  addLegend(data = Solar_All_County_Geo, # the dataset
+  addLegend(data = Solar_All_County, # the dataset
             "bottomright", # where to put the legend
-            pal = pal, values = ~CAPACITY, # specify the color palette and the range of values 
-            title = "Capacity", # legend title
+            pal = pal, values = ~capacity_mw, # specify the color palette and the range of values 
+            title = "Capacity (MW)", # legend title
             opacity = 1.0) # the transparency of the legend
 
 

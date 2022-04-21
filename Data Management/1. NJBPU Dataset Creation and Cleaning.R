@@ -76,17 +76,15 @@ Solar_Data1$ZIP[Solar_Data1$ZIP=="0NA"] <- NA
 remove(County_Code_Conversion)
 remove(Solar_Data0)
 
-### STEP 3: AGGREGATE DATA AND GET FINAL DATASETS ###
+### STEP 3: AGGREGATE DATA ###
 
-#Aggregate COUNTY, CUSTOMER_TYPE, THIRD_PARTY_OWNERSHIP for All Customer Types
-Solar_All_County <- Solar_Data1 %>% 
-  group_by(COUNTY, CUSTOMER_TYPE, THIRD_PARTY_OWNERSHIP) %>%
-  summarize(CAPACITY = sum(SYSTEM_SIZE,na.rm=TRUE), COUNT=n())
-
-#Aggregate by COUNTY only for All Customer Types
-Solar_CapCount_County <- Solar_Data1 %>%
-  group_by(COUNTY) %>%
-  summarize(CAPACITY = sum(SYSTEM_SIZE, na.rm=TRUE), COUNT=n())
+#Aggregate COUNTY, THIRD_PARTY_OWNERSHIP for All Customer Types
+Solar_TPO_County <- Solar_Data1 %>% 
+  group_by(COUNTY, THIRD_PARTY_OWNERSHIP) %>%
+  summarize(COUNT = n()) %>%
+  mutate(FREQ = COUNT / sum(COUNT)) %>%
+  filter(THIRD_PARTY_OWNERSHIP == "Yes") %>%
+  select(COUNTY,TPO_FREQ = FREQ)
 
 #Aggregate by COUNTY for only RESIDENTIAL
 Solar_Res_County <- Solar_Data1 %>% 
