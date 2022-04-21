@@ -23,6 +23,7 @@ library(nivocal)
 library(sf)
 library(RColorBrewer)
 library(leaflet)
+library(htmltools)
 
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 
@@ -65,7 +66,8 @@ Row
 renderValueBox({
   total_cap <- paste(prettyNum(county_level_rates[county_level_rates$County==input$County,4],big.mark=",",digits=0)," MW")
   valueBox(total_cap, 
-           icon = "fa-sun")
+           icon = "fa-sun",
+           color = )
 })
 ```
 
@@ -81,57 +83,76 @@ renderValueBox({
 
 Row
 -----------------------------------------------------------------------
-### Total Capacity
+### Total Capacity by County
 
 ```{r}
-pal <- colorBin(palette = "Reds", domain = Solar_All_County$capacity_mw) # split colors from white to red into 9 even bins
-
-leaflet() %>%
+renderLeaflet(
+  {Solar_All_County0 <- Solar_All_County %>%
+    mutate(selected = ifelse(County == input$County, TRUE, FALSE))
+    
+  pal1 <- colorBin(palette = "Reds", domain = Solar_All_County$capacity_mw)
+  labs1 <- as.list(paste(Solar_All_County$County,round(Solar_All_County$capacity_mw)," MW"))
+  
+  map1 <- leaflet(options = leafletOptions(zoomControl = FALSE,
+                                             dragging = FALSE,
+                                             minZoom = 7.3,
+                                             maxZoom = 7.3)) %>%
   addPolygons(data = Solar_All_County,
-              label = ~County, # when you hover over the polygon, it will label the svi
-              color = "gray", # the color of the border
-              fillColor = ~pal(Solar_All_County$capacity_mw), # the colors inside the polygons
+              label = lapply(labs1, HTML), # hover label
+              color = "grey", # the color of the border
+              fillColor = ~pal1(Solar_All_County$capacity_mw), # the colors inside the polygons
               weight = 1.0, # the thickness of the border lines
               opacity = 1.0, # the transparency of the border lines
-              fillOpacity = 0.8) %>%
+              fillOpacity = 1.0) %>%
   addLegend(data = Solar_All_County, # the dataset
             "bottomright", # where to put the legend
-            pal = pal, values = ~capacity_mw, # specify the color palette and the range of values 
+            pal = pal1, values = ~capacity_mw, # specify the color palette and the range of values 
             title = "Capacity (MW)", # legend title
-            opacity = 1.0) # the transparency of the legend
+            opacity = 1.0) 
+  # %>%
+  # addPolygons(data = Solar_All_County0[Solar_All_County0$selected==TRUE],
+  #             color="yellow",
+  #             weight=1.5,
+  #             fillOpacity=0)
+
+    map1}
+)
 ```
 
-### Total Quantity
+### Total Quantity by County
 
 ```{r}
-pal <- colorBin(palette = "Blues", domain = Solar_All_County$quantity) # split colors from white to red into 9 even bins
-
 renderLeaflet(
-  {solar_all_county0 <- county_level_sectors %>% filter(County != "Overall") %>%
-    mutate(selected = ifelse(County == input$County, TRUE, FALSE)
-    
-  map1 <- leaflet() %>%
+  {pal2 <- colorBin(palette = "Blues", domain = Solar_All_County$quantity, 6)
+  labs2 <- as.list(paste(Solar_All_County$County,
+                         prettyNum(Solar_All_County$quantity,big.mark=",",digits=1)))
+  
+  
+  map2 <- leaflet(options = leafletOptions(zoomControl = FALSE,
+                                             dragging = FALSE,
+                                             minZoom = 7.3,
+                                             maxZoom = 7.3)) %>%
   addPolygons(data = Solar_All_County,
-              label = ~County, # when you hover over the polygon, it will label the svi
-              color = "gray", # the color of the border
-              fillColor = ~pal(Solar_All_County$quantity), # the colors inside the polygons
+              label = lapply(labs2,HTML), # hover label
+              color = "grey", # the color of the border
+              fillColor = ~pal2(Solar_All_County$quantity), # the colors inside the polygons
               weight = 1.0, # the thickness of the border lines
               opacity = 1.0, # the transparency of the border lines
-              fillOpacity = 0.8) %>%
+              fillOpacity = 1.0) %>%
   addLegend(data = Solar_All_County, # the dataset
             "bottomright", # where to put the legend
-            pal = pal, values = ~quantity, # specify the color palette and the range of values 
+            pal = pal2, values = ~quantity, # specify the color palette and the range of values 
             title = "# of Projects", # legend title
             opacity = 1.0) # the transparency of the legend
 
-    map1}
+    map2}
 )
 ```
 
 Row {.tabset}
 -----------------------------------------------------------------------
 
-### Capacity by Sector
+### Capacity by County and Sector
 
 ```{r}
 renderPlotly(
@@ -167,7 +188,7 @@ fig <- plot_ly(county_level_sectors0,
 
 ```
 
-### Quantity by Sector
+### Quantity by County and Sector
 
 ```{r}
 renderPlotly(

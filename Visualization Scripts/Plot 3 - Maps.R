@@ -24,6 +24,7 @@ leaflet() %>%
               weight = 1.0, # the thickness of the border lines
               opacity = 1.0, # the transparency of the border lines
               fillOpacity = 0.8) %>%
+  addTiles() %>%
   addLegend(data = Solar_All_County, # the dataset
             "bottomright", # where to put the legend
             pal = pal, values = ~capacity_mw, # specify the color palette and the range of values 
