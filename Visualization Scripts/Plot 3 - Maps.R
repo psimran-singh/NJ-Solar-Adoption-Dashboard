@@ -10,8 +10,8 @@ setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 load("Solar_All_County.Rda")
 load("Solar_Res_County.Rda")
 
-Solar_All_County <- st_as_sf(Solar_All_County)
-Solar_Res_County <- st_as_sf(Solar_Res_County)
+Solar_All_County <- st_as_sf(Solar_All_County) %>% st_transform(4326)
+Solar_Res_County <- st_as_sf(Solar_Res_County) %>% st_transform(4326)
 
 
 pal <- colorBin(palette = "Reds", domain = Solar_All_County$capacity_mw) # split colors from white to red into 9 even bins

@@ -28,8 +28,12 @@ setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 
 ## Section 1: Overall Landscape ##
 # Load in all the data we need
+load("Solar_All_County.Rda")
+load("Solar_Res_County.Rda")
 county_level_rates <- read_csv('County_Totals.csv')
 county_level_sectors <- read_csv('County_Sectors.csv')
+Solar_All_County <- st_as_sf(Solar_All_County) %>% st_transform(4326)
+Solar_Res_County <- st_as_sf(Solar_Res_County) %>% st_transform(4326)
 
 
 ## Section 2: Overall Trends ## 
@@ -73,6 +77,48 @@ renderValueBox({
   valueBox(total_quant,
            icon = "fa-solar-panel")
 })
+```
+
+Row
+-----------------------------------------------------------------------
+### Total Capacity
+
+```{r}
+pal <- colorBin(palette = "Reds", domain = Solar_All_County$capacity_mw) # split colors from white to red into 9 even bins
+
+leaflet() %>%
+  addPolygons(data = Solar_All_County,
+              label = ~County, # when you hover over the polygon, it will label the svi
+              color = "gray", # the color of the border
+              fillColor = ~pal(Solar_All_County$capacity_mw), # the colors inside the polygons
+              weight = 1.0, # the thickness of the border lines
+              opacity = 1.0, # the transparency of the border lines
+              fillOpacity = 0.8) %>%
+  addLegend(data = Solar_All_County, # the dataset
+            "bottomright", # where to put the legend
+            pal = pal, values = ~capacity_mw, # specify the color palette and the range of values 
+            title = "Capacity (MW)", # legend title
+            opacity = 1.0) # the transparency of the legend
+```
+
+### Total Quantity
+
+```{r}
+pal <- colorBin(palette = "Blues", domain = Solar_All_County$quantity) # split colors from white to red into 9 even bins
+
+leaflet() %>%
+  addPolygons(data = Solar_All_County,
+              label = ~County, # when you hover over the polygon, it will label the svi
+              color = "gray", # the color of the border
+              fillColor = ~pal(Solar_All_County$quantity), # the colors inside the polygons
+              weight = 1.0, # the thickness of the border lines
+              opacity = 1.0, # the transparency of the border lines
+              fillOpacity = 0.8) %>%
+  addLegend(data = Solar_All_County, # the dataset
+            "bottomright", # where to put the legend
+            pal = pal, values = ~quantity, # specify the color palette and the range of values 
+            title = "# of Projects", # legend title
+            opacity = 1.0) # the transparency of the legend
 ```
 
 Row {.tabset}
@@ -149,6 +195,7 @@ fig <- plot_ly(county_level_sectors0,
 )
 
 ```
+
 
 Overall Trends
 =====================================
