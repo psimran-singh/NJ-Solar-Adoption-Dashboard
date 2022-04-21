@@ -106,7 +106,11 @@ leaflet() %>%
 ```{r}
 pal <- colorBin(palette = "Blues", domain = Solar_All_County$quantity) # split colors from white to red into 9 even bins
 
-leaflet() %>%
+renderLeaflet(
+  {solar_all_county0 <- county_level_sectors %>% filter(County != "Overall") %>%
+    mutate(selected = ifelse(County == input$County, TRUE, FALSE)
+    
+  map1 <- leaflet() %>%
   addPolygons(data = Solar_All_County,
               label = ~County, # when you hover over the polygon, it will label the svi
               color = "gray", # the color of the border
@@ -119,6 +123,9 @@ leaflet() %>%
             pal = pal, values = ~quantity, # specify the color palette and the range of values 
             title = "# of Projects", # legend title
             opacity = 1.0) # the transparency of the legend
+
+    map1}
+)
 ```
 
 Row {.tabset}
