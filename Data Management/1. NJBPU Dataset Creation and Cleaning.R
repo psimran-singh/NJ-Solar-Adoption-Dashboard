@@ -78,8 +78,9 @@ remove(Solar_Data0)
 
 ### STEP 3: AGGREGATE DATA ###
 
-#Aggregate COUNTY, THIRD_PARTY_OWNERSHIP for All Customer Types
+#Aggregate COUNTY, THIRD_PARTY_OWNERSHIP for only RESIDENTIAL
 Solar_TPO_County <- Solar_Data1 %>% 
+  filter(CUSTOMER_TYPE=="Residential") %>%
   group_by(COUNTY, THIRD_PARTY_OWNERSHIP) %>%
   summarize(COUNT = n()) %>%
   mutate(FREQ = COUNT / sum(COUNT)) %>%

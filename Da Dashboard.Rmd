@@ -67,7 +67,7 @@ renderValueBox({
   total_cap <- paste(prettyNum(county_level_rates[county_level_rates$County==input$County,4],big.mark=",",digits=0)," MW")
   valueBox(total_cap, 
            icon = "fa-sun",
-           color = )
+           color = "#FD8D3C")
 })
 ```
 
@@ -77,7 +77,8 @@ renderValueBox({
 renderValueBox({
   total_quant <- paste(prettyNum(county_level_rates[county_level_rates$County==input$County,2], big.mark=","))
   valueBox(total_quant,
-           icon = "fa-solar-panel")
+           icon = "fa-solar-panel",
+           color = "#74C476")
 })
 ```
 
@@ -90,7 +91,7 @@ renderLeaflet(
   {Solar_All_County0 <- Solar_All_County %>%
     mutate(selected = ifelse(County == input$County, TRUE, FALSE))
     
-  pal1 <- colorBin(palette = "Reds", domain = Solar_All_County$capacity_mw)
+  pal1 <- colorBin(palette = "Oranges", domain = Solar_All_County$capacity_mw)
   labs1 <- as.list(paste(Solar_All_County$County,round(Solar_All_County$capacity_mw)," MW"))
   
   map1 <- leaflet(options = leafletOptions(zoomControl = FALSE,
@@ -123,7 +124,7 @@ renderLeaflet(
 
 ```{r}
 renderLeaflet(
-  {pal2 <- colorBin(palette = "Blues", domain = Solar_All_County$quantity, 6)
+  {pal2 <- colorBin(palette = "Greens", domain = Solar_All_County$quantity, 6)
   labs2 <- as.list(paste(Solar_All_County$County,
                          prettyNum(Solar_All_County$quantity,big.mark=",",digits=1)))
   
@@ -237,7 +238,8 @@ Row
 renderValueBox({
   cap_yoy <- paste(prettyNum(trend_yoy[22,9],big.mark=",",digits=2))
   valueBox(cap_yoy, 
-     icon = "fa-sun")
+     icon = "fa-sun",
+     color = "#FD8D3C")
 })
 ```
 
@@ -247,7 +249,8 @@ renderValueBox({
 renderValueBox({
   quant_yoy <- paste(prettyNum(trend_yoy[22,17],big.mark=",",digits=2))
   valueBox(quant_yoy,
-           icon = "fa-solar-panel")
+           icon = "fa-solar-panel",
+           color = "#74C476")
 })
 ```
 
