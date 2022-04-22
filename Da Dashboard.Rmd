@@ -62,13 +62,6 @@ Current Landscape {.sidebar}
 
 Solar energy is playing a significant role in shifting New Jersey's energy economy away from fossil fuels and towards renewables. 
 
-This dashboard utilizes publicly available data on solar installations in New Jersey from New Jersey Board of Public Utilities' (NJBPU) Clean Energy Program. This data is current as of December 2021 and accounts for all solar installations in New Jersey.
-
-
-```{r}
-selectInput("County", "Select a county to highlight:", choices = distinct(county_level_rates, `County`))
-```
-
 The major sectors of solar energy are Residential, Non-Residential, and Grid Supply.
 
 Residential solar energy consists primarily of small (~10kW) net-metered rooftop installations. Non-Residential, which covers commercial, farm, and government installations, are typically larger (~200kW) net-metered rooftop solar panel installations. Grid Supply projects, consist of very large (~6600kW) ground-mounted installations.
@@ -80,7 +73,7 @@ Row
 
 ```{r}
 renderValueBox({
-  total_cap <- paste(prettyNum(county_level_rates[county_level_rates$County==input$County,4],big.mark=",",digits=0)," MW")
+  total_cap <- paste(prettyNum(county_level_rates[county_level_rates$County=="Overall",4],big.mark=",",digits=0)," MW")
   valueBox(total_cap, 
            icon = "fa-sun",
            color = "#FD8D3C")
@@ -91,7 +84,7 @@ renderValueBox({
 
 ```{r}
 renderValueBox({
-  total_quant <- paste(prettyNum(county_level_rates[county_level_rates$County==input$County,2], big.mark=","))
+  total_quant <- paste(prettyNum(county_level_rates[county_level_rates$County=="Overall",2], big.mark=","))
   valueBox(total_quant,
            icon = "fa-solar-panel",
            color = "#74C476")
@@ -104,10 +97,7 @@ Row
 
 ```{r}
 renderLeaflet(
-  {Solar_All_County0 <- Solar_All_County %>%
-    mutate(selected = ifelse(County == input$County, TRUE, FALSE))
-    
-  pal1 <- colorBin(palette = "Oranges", domain = Solar_All_County$capacity_mw)
+  {pal1 <- colorBin(palette = "Oranges", domain = Solar_All_County$capacity_mw)
   labs1 <- as.list(paste(Solar_All_County$County,round(Solar_All_County$capacity_mw)," MW"))
   
   map1 <- leaflet(options = leafletOptions(zoomControl = FALSE,
@@ -126,12 +116,6 @@ renderLeaflet(
             pal = pal1, values = ~capacity_mw, # specify the color palette and the range of values 
             title = "Capacity (MW)", # legend title
             opacity = 1.0) 
-  # %>%
-  # addPolygons(data = Solar_All_County0[Solar_All_County0$selected==TRUE],
-  #             color="yellow",
-  #             weight=1.5,
-  #             fillOpacity=0)
-
     map1}
 )
 ```
@@ -162,7 +146,7 @@ renderLeaflet(
             title = "# of Projects", # legend title
             opacity = 1.0) # the transparency of the legend
 
-    map2}
+  map2}
 )
 ```
 
@@ -173,13 +157,12 @@ Row {.tabset}
 
 ```{r}
 renderPlotly(
-  {county_level_sectors0 <- county_level_sectors %>% filter(County != "Overall") %>%
-    mutate(selected = ifelse(County == input$County, TRUE, FALSE))
-  
-  colors <- county_level_sectors0 %>% select(County,selected) %>% 
-    mutate(res_color = ifelse(selected == TRUE, "#6367CE", "#9FA3F2")) %>%
-    mutate(nonres_color = ifelse(selected == TRUE, "#F1A73E", "#F7C57D")) %>%
-    mutate(gs_color = ifelse(selected == TRUE, "#4DBA37", "#89EA76"))
+  {
+    colors <- county_level_sectors %>% 
+    select(County) %>% 
+    mutate(res_color = "#6367CE") %>%
+    mutate(nonres_color = "#F1A73E") %>%
+    mutate(gs_color = "#4DBA37")
 
 fig <- plot_ly(county_level_sectors0, 
                x = county_level_sectors0$`County`, 
