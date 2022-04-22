@@ -1,29 +1,22 @@
-library(tidycensus)
 library(tidyverse)
-library(sf)
-library(viridis)
-library(units)
-library(RColorBrewer)
-library(leaflet)
-library(esquisse)
-
-income_capacity <- ggplot(Solar_Res_Zip) +
-  aes(x = Income, y = CAPACITY, size = CAPACITY) +
-  geom_point(shape = "circle", colour = "#440154") +
-  geom_smooth(span = 1L) +
-  labs(
-    y = "Solar Capacity",
-    title = "Relationship between Income and Capacity",
-    subtitle = "Using zip code level data"
-  ) +
-  theme_light()
-
-income_capacity
+library(plotly)
 
 
+fig_income <- plot_ly(df, x = df$`Income`, y = df$`Adoption_Rate`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Income"))
 
-Solar_Res_Zip <- drop_na(Solar_Res_Zip)
-esquisse::esquisser(Solar_Res_Zip, viewer = "browser")
+fig_perc_male <- plot_ly(df, x = df$`Perc_Male`, y = df$`Adoption_Rate`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Perc Male"))
+
+fig_perc_white <- plot_ly(df, x = df$`Perc_White`, y = df$`Adoption_Rate`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Perc White"))
+
+fig_perc_house_owned <- plot_ly(df, x = df$`Perc_House_Owned`, y = df$`Adoption_Rate`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Perc House Owned"))
 
 
 

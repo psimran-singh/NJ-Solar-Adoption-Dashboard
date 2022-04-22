@@ -25,7 +25,7 @@ library(RColorBrewer)
 library(leaflet)
 library(htmltools)
 
-setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
+setwd("~/Data Viz in R/Data-Visualization-Final-Project/Data Files for Analysis")
 
 ## Section 1: Overall Landscape ##
 # Load in all the data we need
@@ -42,6 +42,10 @@ Solar_Res_County <- st_as_sf(Solar_Res_County) %>% st_transform(4326)
 trend <- read_csv('Trend.csv')
 trend_trans <- read_csv('Trend_Transposed.csv')
 trend_yoy <- read_csv('Trend_Percents.csv')
+
+## Section 3: Analysis ##
+# Load in all the data we need
+zip_level_res <- read_csv("Residential_Solar_Zip.csv")
 
 ```
 
@@ -384,4 +388,108 @@ DT::renderDataTable({
   columnDefs = list(list(width = '200px', targets = "_all"),
                     list(className = 'dt-center', targets = "_all"))))
 })
+```
+
+Analysis
+=====================================
+
+Row {.tabset}
+-----------------------------------------------------------------------
+
+Adoption  Rate as the Independent Variable
+
+### Income
+
+```{r}
+fig_income <- plot_ly(zip_level_res, x = zip_level_res$`Income`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Income"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_income
+```
+
+### Percent of Male Population
+
+```{r}
+fig_perc_male <- plot_ly(zip_level_res, x = zip_level_res$`Perc_Male`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Percent of Population That's Male"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_perc_male
+```
+
+### Percent of White Population
+
+```{r}
+fig_perc_white <- plot_ly(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Percent of Population That's White"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_perc_white
+
+```
+
+### Percent of Owned Houses
+
+```{r}
+fig_perc_house_owned <- plot_ly(zip_level_res, x = zip_level_res$`Perc_House_Owned`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Percent of Population That Owns Their House"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_perc_house_owned
+```
+
+
+Row {.tabset}
+-----------------------------------------------------------------------
+
+Capacity as the Independent Variable
+
+### Income
+
+```{r}
+fig_income_c <- plot_ly(zip_level_res, x = zip_level_res$`Income`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Total Capacity"),
+         xaxis = list(title = "Income"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_income_c
+```
+
+### Percent of Male Population
+
+```{r}
+fig_perc_male_c <- plot_ly(zip_level_res, x = zip_level_res$`Perc_Male`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Total Capacity"),
+         xaxis = list(title = "Percent of Population That's Male"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_perc_male_c
+```
+
+### Percent of White Population
+
+```{r}
+fig_perc_white_c <- plot_ly(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Total Capacity"),
+         xaxis = list(title = "Percent of Population That's White"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_perc_white_c
+
+```
+
+### Percent of Owned Houses
+
+```{r}
+fig_perc_house_owned_c <- plot_ly(zip_level_res, x = zip_level_res$`Perc_House_Owned`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Total Capacity"),
+         xaxis = list(title = "Percent of Population That Owns Their House"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_perc_house_owned_c
 ```
