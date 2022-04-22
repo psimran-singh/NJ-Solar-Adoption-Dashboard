@@ -87,6 +87,15 @@ Solar_TPO_County <- Solar_Data1 %>%
   filter(THIRD_PARTY_OWNERSHIP == "Yes") %>%
   select(COUNTY,TPO_FREQ = FREQ)
 
+#Aggregate ZIP, THIRD_PARTY_OWNERSHIP for only RESIDENTIAL
+Solar_TPO_Zip <- Solar_Data1 %>% 
+  filter(CUSTOMER_TYPE=="Residential") %>%
+  group_by(ZIP, THIRD_PARTY_OWNERSHIP) %>%
+  summarize(COUNT = n()) %>%
+  mutate(FREQ = COUNT / sum(COUNT)) %>%
+  filter(THIRD_PARTY_OWNERSHIP == "Yes") %>%
+  select(ZIP,TPO_FREQ = FREQ)
+
 #Aggregate by COUNTY for only RESIDENTIAL
 Solar_Res_County <- Solar_Data1 %>% 
   filter(CUSTOMER_TYPE=="Residential") %>%
