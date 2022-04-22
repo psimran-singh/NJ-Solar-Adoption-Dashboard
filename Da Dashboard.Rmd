@@ -93,14 +93,13 @@ renderValueBox({
 
 Row
 -----------------------------------------------------------------------
-### Total Capacity by County
+### Total NJ Capacity by County
 
 ```{r}
-renderLeaflet(
-  {pal1 <- colorBin(palette = "Oranges", domain = Solar_All_County$capacity_mw)
-  labs1 <- as.list(paste(Solar_All_County$County,round(Solar_All_County$capacity_mw)," MW"))
+pal1 <- colorBin(palette = "Oranges", domain = Solar_All_County$capacity_mw)
+labs1 <- as.list(paste(Solar_All_County$County,round(Solar_All_County$capacity_mw)," MW"))
   
-  map1 <- leaflet(options = leafletOptions(zoomControl = FALSE,
+map1 <- leaflet(options = leafletOptions(zoomControl = FALSE,
                                              dragging = FALSE,
                                              minZoom = 7.3,
                                              maxZoom = 7.3)) %>%
@@ -116,20 +115,19 @@ renderLeaflet(
             pal = pal1, values = ~capacity_mw, # specify the color palette and the range of values 
             title = "Capacity (MW)", # legend title
             opacity = 1.0) 
-    map1}
-)
+map1
+
 ```
 
-### Total Quantity by County
+### Total NJ Quantity by County
 
 ```{r}
-renderLeaflet(
-  {pal2 <- colorBin(palette = "Greens", domain = Solar_All_County$quantity, 6)
-  labs2 <- as.list(paste(Solar_All_County$County,
+pal2 <- colorBin(palette = "Greens", domain = Solar_All_County$quantity, 6)
+labs2 <- as.list(paste(Solar_All_County$County,
                          prettyNum(Solar_All_County$quantity,big.mark=",",digits=1)))
   
   
-  map2 <- leaflet(options = leafletOptions(zoomControl = FALSE,
+map2 <- leaflet(options = leafletOptions(zoomControl = FALSE,
                                              dragging = FALSE,
                                              minZoom = 7.3,
                                              maxZoom = 7.3)) %>%
@@ -146,28 +144,31 @@ renderLeaflet(
             title = "# of Projects", # legend title
             opacity = 1.0) # the transparency of the legend
 
-  map2}
-)
+map2
+
 ```
 
 Row {.tabset}
 -----------------------------------------------------------------------
 
-### Capacity by County and Sector
-
 ```{r}
-renderPlotly(
-  {
-    colors <- county_level_sectors %>% 
-    select(County) %>% 
+#Make the color and sector level tables
+county_level_sectors0 <- county_level_sectors %>% filter(County!="Overall")
+
+colors <- county_level_sectors0 %>%
+    select(County) %>%
     mutate(res_color = "#6367CE") %>%
     mutate(nonres_color = "#F1A73E") %>%
     mutate(gs_color = "#4DBA37")
+```
 
-fig <- plot_ly(county_level_sectors0, 
-               x = county_level_sectors0$`County`, 
+### Capacity by County and Sector
+
+```{r}
+fig1 <- plot_ly(county_level_sectors0,
+               x = county_level_sectors0$`County`,
                y = (county_level_sectors0$`cap_res`/1000),
-               type = "bar", 
+               type = "bar",
                name = "Residential",
                marker = list(color = colors$res_color))  %>%
   add_trace(y = (county_level_sectors0$`cap_nonres`/1000),
@@ -176,51 +177,40 @@ fig <- plot_ly(county_level_sectors0,
   add_trace(y = (county_level_sectors0$`cap_gs`/1000),
             name = 'Grid Supply',
             marker = list(color = colors$gs_color))  %>%
-  layout(yaxis = list(title = "Capacity (MW)"), 
+  layout(yaxis = list(title = "Capacity (MW)"),
          xaxis = list(title = "Year",
                       tickangle = -45,
-                      tickmode = 'linear', 
+                      tickmode = 'linear',
                       categoryorder = "total descending"),
          hovermode='x',
          barmode = "stack")
-  fig}
-)
+fig1
 
 ```
 
 ### Quantity by County and Sector
 
 ```{r}
-renderPlotly(
-  {county_level_sectors0 <- county_level_sectors %>% filter(County != "Overall") %>%
-    mutate(selected = ifelse(County == input$County, TRUE, FALSE))
-  
-  colors <- county_level_sectors0 %>% select(County,selected) %>% 
-    mutate(res_color = ifelse(selected == TRUE, "#6367CE", "#9FA3F2")) %>%
-    mutate(nonres_color = ifelse(selected == TRUE, "#F1A73E", "#F7C57D")) %>%
-    mutate(gs_color = ifelse(selected == TRUE, "#4DBA37", "#89EA76"))
-
-fig <- plot_ly(county_level_sectors0, 
-               x = county_level_sectors0$`County`, 
-               y = county_level_sectors0$`quant_res`,
-               type = "bar", 
+fig2 <- plot_ly(county_level_sectors0,
+               x = county_level_sectors0$`County`,
+               y = (county_level_sectors0$`quant_res`),
+               type = "bar",
                name = "Residential",
                marker = list(color = colors$res_color))  %>%
-  add_trace(y = county_level_sectors0$`quant_nonres`,
+  add_trace(y = (county_level_sectors0$`quant_nonres`),
             name = 'Non-Residential',
             marker = list(color = colors$nonres_color))  %>%
-  add_trace(y = county_level_sectors0$`quant_gs`,
+  add_trace(y = (county_level_sectors0$`quant_gs`),
             name = 'Grid Supply',
             marker = list(color = colors$gs_color))  %>%
-  layout(yaxis = list(title = "quantacity (MW)"), 
+  layout(yaxis = list(title = "Quantity"),
          xaxis = list(title = "Year",
                       tickangle = -45,
-                      tickmode = 'linear', 
+                      tickmode = 'linear',
                       categoryorder = "total descending"),
          hovermode='x',
          barmode = "stack")
-  fig}
-)
+fig2
 
 ```
 
