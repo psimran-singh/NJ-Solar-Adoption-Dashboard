@@ -2,7 +2,7 @@
 title: "Solar Adoption in New Jersey"
 output: 
   flexdashboard::flex_dashboard:
-    theme: default
+    theme: "lumen"
     orientation: rows
     source_code: "https://github.com/psimran-singh/Data-Visualization-Final-Project"
     vertical_layout: scroll
@@ -24,24 +24,30 @@ library(sf)
 library(RColorBrewer)
 library(leaflet)
 library(htmltools)
+library(janitor)
 
+# Load in all the necessary data tables:
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 
 ## Section 1: Overall Landscape ##
-# Load in all the data we need
 load("Solar_All_County.Rda")
-load("Solar_Res_County.Rda")
 county_level_rates <- read_csv('County_Totals.csv')
 county_level_sectors <- read_csv('County_Sectors.csv')
 Solar_All_County <- st_as_sf(Solar_All_County) %>% st_transform(4326)
-Solar_Res_County <- st_as_sf(Solar_Res_County) %>% st_transform(4326)
-
 
 ## Section 2: Overall Trends ## 
-# Load in all the data we need
 trend <- read_csv('Trend.csv')
 trend_trans <- read_csv('Trend_Transposed.csv')
 trend_yoy <- read_csv('Trend_Percents.csv')
+
+## Section 3: Residential Landscape ##
+load("Solar_Res_County.Rda")
+Solar_Res_County <- st_as_sf(Solar_Res_County) %>% st_transform(4326) %>%
+  mutate(CAPACITY_MW=CAPACITY/1000)
+Overall_Adoption_Rate <- Solar_Res_County %>% st_drop_geometry() %>%  
+  select(COUNTY,COUNT,Total_Occ_House) %>%
+  adorn_totals("row") %>% filter(COUNTY=="Total") %>%
+  mutate(Adoption_Rate=COUNT/Total_Occ_House)
 
 ```
 
@@ -51,11 +57,18 @@ Overall Landscape
 Current Landscape {.sidebar}
 -----------------------------------------------------------------------
 
-Pick a county to highlight below:
+Solar energy is playing a significant role in shifting New Jersey's energy economy away from fossil fuels and towards renewables. 
+
+This dashboard utilizes publicly available data on solar installations in New Jersey from New Jersey Board of Public Utilities' (NJBPU) Clean Energy Program. This data is current as of December 2021 and accounts for all solar installations in New Jersey.
+
 
 ```{r}
-selectInput("County", "County:", choices = distinct(county_level_rates, `County`))
+selectInput("County", "Select a county to highlight:", choices = distinct(county_level_rates, `County`))
 ```
+
+The major sectors of solar energy are Residential, Non-Residential, and Grid Supply.
+
+Residential solar energy consists primarily of small (~10kW) net-metered rooftop installations. Non-Residential, which covers commercial, farm, and government installations, are typically larger (~200kW) net-metered rooftop solar panel installations. Grid Supply projects, consist of very large (~6600kW) ground-mounted installations.
 
 Row
 -----------------------------------------------------------------------
@@ -384,4 +397,132 @@ DT::renderDataTable({
   columnDefs = list(list(width = '200px', targets = "_all"),
                     list(className = 'dt-center', targets = "_all"))))
 })
+```
+
+
+Residential Landscape
+=====================================
+
+Row
+-----------------------------------------------------------------------
+
+### Current Installed Residential Rooftop Solar Capacity
+
+```{r}
+renderValueBox({
+  total_cap <- paste(prettyNum(county_level_sectors[county_level_sectors$County=="Overall",3]/1000,
+                               big.mark=",",digits=0)," MW")
+  valueBox(total_cap, 
+           icon = "fa-sun",
+           color = "#FD8D3C")
+})
+```
+
+### Current Installed Residential Rooftop Solar Projects
+
+```{r}
+renderValueBox({
+  total_quant <- paste(prettyNum(county_level_sectors[county_level_sectors$County=="Overall",2], big.mark=","))
+  valueBox(total_quant,
+           icon = "fa-solar-panel",
+           color = "#74C476")
+})
+```
+
+### Current Residential Rooftop Adoption Rate
+
+```{r}
+renderValueBox({
+  total_rate <- paste(prettyNum(Overall_Adoption_Rate[1,4], big.mark=","))
+  valueBox(total_rate,
+           icon = "fa-house-user",
+           color = "#6baed6")
+})
+```
+
+
+Row 
+-----------------------------------------------------------------------
+
+### Total Residential Rooftop Capacity by County
+
+```{r}
+pal3 <- colorBin(palette = "Oranges", domain = Solar_Res_County$CAPACITY_MW)
+labs3 <- as.list(paste(Solar_Res_County$COUNTY,round(Solar_Res_County$CAPACITY_MW)," MW"))
+  
+map3 <- leaflet(options = leafletOptions(zoomControl = FALSE,
+                                             dragging = FALSE,
+                                             minZoom = 7.3,
+                                             maxZoom = 7.3)) %>%
+addPolygons(data = Solar_Res_County,
+              label = lapply(labs3, HTML), # hover label
+              color = "grey", # the color of the border
+              fillColor = ~pal3(Solar_Res_County$CAPACITY_MW), # the colors inside the polygons
+              weight = 1.0, # the thickness of the border lines
+              opacity = 1.0, # the transparency of the border lines
+              fillOpacity = 1.0) %>%
+addLegend(data = Solar_Res_County, # the dataset
+            "bottomright", # where to put the legend
+            pal = pal3, values = ~CAPACITY_MW, # specify the color palette and the range of values 
+            title = "Capacity (MW)", # legend title
+            opacity = 1.0) 
+
+map3
+
+```
+
+### Total Residential Rooftop Quantity by County
+
+```{r}
+pal4 <- colorBin(palette = "Greens", domain = Solar_Res_County$COUNT, 6)
+labs4 <- as.list(paste(Solar_Res_County$COUNTY,
+                         prettyNum(Solar_Res_County$COUNT,big.mark=",",digits=1)))
+  
+map4 <- leaflet(options = leafletOptions(zoomControl = FALSE,
+                                             dragging = FALSE,
+                                             minZoom = 7.3,
+                                             maxZoom = 7.3)) %>%
+addPolygons(data = Solar_Res_County,
+              label = lapply(labs4, HTML), # hover label
+              color = "grey", # the color of the border
+              fillColor = ~pal4(Solar_Res_County$COUNT), # the colors inside the polygons
+              weight = 1.0, # the thickness of the border lines
+              opacity = 1.0, # the transparency of the border lines
+              fillOpacity = 1.0) %>%
+addLegend(data = Solar_Res_County, # the dataset
+            "bottomright", # where to put the legend
+            pal = pal4, values = ~COUNT, # specify the color palette and the range of values 
+            title = "Quantity", # legend title
+            opacity = 1.0) 
+
+map4
+
+```
+
+### Residential Rooftop Solar Adoption Rate by County
+
+```{r}
+pal5 <- colorBin(palette = "Blues", domain = Solar_Res_County$Adoption_Rate, 6)
+labs5 <- as.list(paste(Solar_Res_County$COUNTY,
+                         prettyNum(100*Solar_Res_County$Adoption_Rate,big.mark=",",digits=3)," %"))
+  
+map5 <- leaflet(options = leafletOptions(zoomControl = FALSE,
+                                             dragging = FALSE,
+                                             minZoom = 7.3,
+                                             maxZoom = 7.3)) %>%
+addPolygons(data = Solar_Res_County,
+              label = lapply(labs5, HTML), # hover label
+              color = "grey", # the color of the border
+              fillColor = ~pal5(Solar_Res_County$Adoption_Rate), # the colors inside the polygons
+              weight = 1.0, # the thickness of the border lines
+              opacity = 1.0, # the transparency of the border lines
+              fillOpacity = 1.0) %>%
+addLegend(data = Solar_Res_County, # the dataset
+            "bottomright", # where to put the legend
+            pal = pal5, values = ~Adoption_Rate, # specify the color palette and the range of values
+            title = "Adoption Rate", # legend title
+            opacity = 1.0) 
+
+map5
+
 ```
