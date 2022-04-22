@@ -49,6 +49,9 @@ Overall_Adoption_Rate <- Solar_Res_County %>% st_drop_geometry() %>%
   adorn_totals("row") %>% filter(COUNTY=="Total") %>%
   mutate(Adoption_Rate=COUNT/Total_Occ_House)
 
+## Section 4: Residential Analysis ###
+zip_level_res <- read_csv("Residential_Solar_Zip.csv")
+
 ```
 
 Overall Landscape
@@ -435,7 +438,7 @@ renderValueBox({
 renderValueBox({
   total_rate <- paste(prettyNum(100*Overall_Adoption_Rate[1,4], digits= 3)," %")
   valueBox(total_rate,
-           icon = "fa-house",
+           icon = "fa-house-user",
            color = "#6baed6")
 })
 ```
@@ -525,4 +528,109 @@ addLegend(data = Solar_Res_County, # the dataset
 
 map5
 
+```
+
+
+Analysis
+=====================================
+
+Row {.tabset}
+-----------------------------------------------------------------------
+
+Adoption  Rate as the Independent Variable
+
+### Income
+
+```{r}
+fig_income <- plot_ly(zip_level_res, x = zip_level_res$`Income`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Income"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_income
+```
+
+### Percent of Male Population
+
+```{r}
+fig_perc_male <- plot_ly(zip_level_res, x = zip_level_res$`Perc_Male`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Percent of Population That's Male"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_perc_male
+```
+
+### Percent of White Population
+
+```{r}
+fig_perc_white <- plot_ly(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Percent of Population That's White"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_perc_white
+
+```
+
+### Percent of Owned Houses
+
+```{r}
+fig_perc_house_owned <- plot_ly(zip_level_res, x = zip_level_res$`Perc_House_Owned`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Percent of Population That Owns Their House"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_perc_house_owned
+```
+
+
+Row {.tabset}
+-----------------------------------------------------------------------
+
+Capacity as the Independent Variable
+
+### Income
+
+```{r}
+fig_income_c <- plot_ly(zip_level_res, x = zip_level_res$`Income`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Total Capacity"),
+         xaxis = list(title = "Income"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_income_c
+```
+
+### Percent of Male Population
+
+```{r}
+fig_perc_male_c <- plot_ly(zip_level_res, x = zip_level_res$`Perc_Male`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Total Capacity"),
+         xaxis = list(title = "Percent of Population That's Male"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_perc_male_c
+```
+
+### Percent of White Population
+
+```{r}
+fig_perc_white_c <- plot_ly(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Total Capacity"),
+         xaxis = list(title = "Percent of Population That's White"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_perc_white_c
+
+```
+
+### Percent of Owned Houses
+
+```{r}
+fig_perc_house_owned_c <- plot_ly(zip_level_res, x = zip_level_res$`Perc_House_Owned`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
+  layout(yaxis = list(title = "Total Capacity"),
+         xaxis = list(title = "Percent of Population That Owns Their House"),
+         text = list(title = "Using Zip Code Level Data"))
+
+fig_perc_house_owned_c
 ```
