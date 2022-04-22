@@ -433,9 +433,9 @@ renderValueBox({
 
 ```{r}
 renderValueBox({
-  total_rate <- paste(prettyNum(Overall_Adoption_Rate[1,4], big.mark=","))
+  total_rate <- paste(prettyNum(100*Overall_Adoption_Rate[1,4], digits= 3)," %")
   valueBox(total_rate,
-           icon = "fa-house-user",
+           icon = "fa-house",
            color = "#6baed6")
 })
 ```
