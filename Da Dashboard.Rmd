@@ -25,6 +25,7 @@ library(RColorBrewer)
 library(leaflet)
 library(htmltools)
 library(janitor)
+library(fontawesome)
 
 # Load in all the necessary data tables:
 setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
@@ -54,6 +55,44 @@ zip_level_res <- read_csv("Residential_Solar_Zip.csv")
 
 ```
 
+```{r results="asis"}
+#Set Leaflet background colors white
+cat("
+<style>
+.leaflet-container {
+    background: #FFF;
+}
+</style>
+")
+
+#Full length datatables
+cat("
+<style>
+.dataTables_scrollBody {
+    height:400px !important;
+    max-height:400px !important;
+}
+.chart-stage-flex {
+    overflow:auto !important;
+}
+</style>
+")
+
+#Make the colors for the sector level tables
+county_level_sectors0 <- county_level_sectors %>% filter(County!="Overall")
+
+colors <- county_level_sectors0 %>%
+    select(County) %>%
+    mutate(res_cap_color = "#2479b6") %>%
+    mutate(nonres_cap_color = "#f57d13") %>%
+    mutate(gs_cap_color = "#379531") %>%
+    mutate(res_quant_color = "#2479b6") %>%
+    mutate(nonres_quant_color = "#f57d13") %>%
+    mutate(gs_quant_color = "#379531")
+
+colors2 <- colors %>% select(-County) %>% slice_head(n=1)
+```
+
 Overall Landscape
 =====================================
 
@@ -64,12 +103,16 @@ Solar energy is playing a significant role in shifting New Jersey's energy econo
 
 The major sectors of solar energy are Residential, Non-Residential, and Grid Supply.
 
-Residential solar energy consists primarily of small (~10kW) net-metered rooftop installations. Non-Residential, which covers commercial, farm, and government installations, are typically larger (~200kW) net-metered rooftop solar panel installations. Grid Supply projects, consist of very large (~6600kW) ground-mounted installations.
+  -Residential solar energy consists primarily of small (~10kW) net-metered rooftop installations.  
+
+  -Non-Residential, which covers commercial, farm, and government installations, are typically larger (~200kW) net-metered rooftop solar panel installations.  
+
+  -Grid Supply projects, consist of very large (~6600kW) ground-mounted installations.
 
 Row
 -----------------------------------------------------------------------
 
-### Current Installed Solar Capacity
+### Total Installed Solar Capacity
 
 ```{r}
 renderValueBox({
@@ -80,7 +123,7 @@ renderValueBox({
 })
 ```
 
-### Current Installed Solar Projects
+### Total Installed Solar Projects
 
 ```{r}
 renderValueBox({
@@ -93,9 +136,10 @@ renderValueBox({
 
 Row
 -----------------------------------------------------------------------
-### Total NJ Capacity by County
+### Total Installed Capacity by County
 
 ```{r}
+
 pal1 <- colorBin(palette = "Oranges", domain = Solar_All_County$capacity_mw)
 labs1 <- as.list(paste(Solar_All_County$County,round(Solar_All_County$capacity_mw)," MW"))
   
@@ -114,12 +158,13 @@ map1 <- leaflet(options = leafletOptions(zoomControl = FALSE,
             "bottomright", # where to put the legend
             pal = pal1, values = ~capacity_mw, # specify the color palette and the range of values 
             title = "Capacity (MW)", # legend title
-            opacity = 1.0) 
+            opacity = 1.0)
 map1
 
 ```
 
-### Total NJ Quantity by County
+
+### Total Installed Quantity by County
 
 ```{r}
 pal2 <- colorBin(palette = "Greens", domain = Solar_All_County$quantity, 6)
@@ -142,27 +187,66 @@ map2 <- leaflet(options = leafletOptions(zoomControl = FALSE,
             "bottomright", # where to put the legend
             pal = pal2, values = ~quantity, # specify the color palette and the range of values 
             title = "# of Projects", # legend title
-            opacity = 1.0) # the transparency of the legend
+            opacity = 1.0) 
 
 map2
 
 ```
 
-Row {.tabset}
+
+
+Landscape by Sector
+=====================================
+
+Row
 -----------------------------------------------------------------------
 
-```{r}
-#Make the color and sector level tables
-county_level_sectors0 <- county_level_sectors %>% filter(County!="Overall")
+### Total Installed Residential Capacity
 
-colors <- county_level_sectors0 %>%
-    select(County) %>%
-    mutate(res_color = "#6367CE") %>%
-    mutate(nonres_color = "#F1A73E") %>%
-    mutate(gs_color = "#4DBA37")
+```{r}
+renderValueBox({
+  total_cap <- paste(prettyNum(county_level_sectors[
+    county_level_sectors$County=="Overall",3]/1000,
+                     big.mark=",",
+                     digits=4)," MW")
+  valueBox(total_cap, 
+           icon = "glyphicon-home",
+           color = colors2$res_cap_color)
+})
 ```
 
-### Capacity by County and Sector
+### Total Installed Non-Residential Capacity
+
+```{r}
+renderValueBox({
+  total_quant <- paste(prettyNum(county_level_sectors[
+    county_level_sectors$County=="Overall",5]/1000, 
+                       big.mark=",",
+                       digits=4), " MW")
+  valueBox(total_quant,
+           icon = "fa-industry",
+           color = colors2$nonres_cap_color)
+})
+```
+
+### Total Installed Grid Supply Capacity
+
+```{r}
+renderValueBox({
+  total_quant <- paste(prettyNum(county_level_sectors[
+    county_level_sectors$County=="Overall",7]/1000, 
+                       big.mark=",",
+                       digits=3), " MW")
+  valueBox(total_quant,
+           icon = "fa-solar-panel",
+           color = colors2$gs_cap_color)
+})
+```
+
+Row 
+-------------------------------------
+
+### Total Installed Capacity by Sector and County
 
 ```{r}
 fig1 <- plot_ly(county_level_sectors0,
@@ -170,13 +254,13 @@ fig1 <- plot_ly(county_level_sectors0,
                y = (county_level_sectors0$`cap_res`/1000),
                type = "bar",
                name = "Residential",
-               marker = list(color = colors$res_color))  %>%
+               marker = list(color = colors$res_cap_color))  %>%
   add_trace(y = (county_level_sectors0$`cap_nonres`/1000),
             name = 'Non-Residential',
-            marker = list(color = colors$nonres_color))  %>%
+            marker = list(color = colors$nonres_cap_color))  %>%
   add_trace(y = (county_level_sectors0$`cap_gs`/1000),
             name = 'Grid Supply',
-            marker = list(color = colors$gs_color))  %>%
+            marker = list(color = colors$gs_cap_color))  %>%
   layout(yaxis = list(title = "Capacity (MW)"),
          xaxis = list(title = "Year",
                       tickangle = -45,
@@ -188,7 +272,52 @@ fig1
 
 ```
 
-### Quantity by County and Sector
+Row
+------------------------------------------------
+
+### Total Installed Residential Projects
+
+```{r}
+renderValueBox({
+  total_cap <- paste(prettyNum(county_level_sectors[county_level_sectors$County=="Overall",2],
+                     big.mark=",",
+                     digits=4))
+  valueBox(total_cap, 
+           icon = "glyphicon-home",
+           color = colors2$res_quant_color)
+})
+```
+
+### Total Installed Non-Residential Projects
+
+```{r}
+renderValueBox({
+  total_quant <- paste(prettyNum(county_level_sectors[county_level_sectors$County=="Overall",4],
+                       big.mark=",",
+                       digits=4))
+  valueBox(total_quant,
+           icon = "fa-industry",
+           color = colors2$nonres_quant_color)
+})
+```
+
+### Total Installed Grid Supply Projects
+
+```{r}
+renderValueBox({
+  total_quant <- paste(prettyNum(county_level_sectors[county_level_sectors$County=="Overall",6],
+                       big.mark=",",
+                       digits=4))
+  valueBox(total_quant,
+           icon = "fa-solar-panel",
+           color = colors2$gs_quant_color)
+})
+```
+
+Row
+---------------------------------
+
+### Total Installed Quantity by Sector and County
 
 ```{r}
 fig2 <- plot_ly(county_level_sectors0,
@@ -196,13 +325,13 @@ fig2 <- plot_ly(county_level_sectors0,
                y = (county_level_sectors0$`quant_res`),
                type = "bar",
                name = "Residential",
-               marker = list(color = colors$res_color))  %>%
+               marker = list(color = colors$res_quant_color))  %>%
   add_trace(y = (county_level_sectors0$`quant_nonres`),
             name = 'Non-Residential',
-            marker = list(color = colors$nonres_color))  %>%
+            marker = list(color = colors$nonres_quant_color))  %>%
   add_trace(y = (county_level_sectors0$`quant_gs`),
             name = 'Grid Supply',
-            marker = list(color = colors$gs_color))  %>%
+            marker = list(color = colors$gs_quant_color))  %>%
   layout(yaxis = list(title = "Quantity"),
          xaxis = list(title = "Year",
                       tickangle = -45,
@@ -215,7 +344,8 @@ fig2
 ```
 
 
-Overall Trends
+
+Overall Trends 
 =====================================
 
 Row
@@ -251,9 +381,16 @@ Row {.tabset}
 
 ```{r}
 fig1 <- plot_ly(trend, x = ~Year, y = ~`Residential Capacity (Cumulative)`,
-               type = 'scatter', mode = 'lines+markers', name = 'Residential') %>% 
-  add_trace(y = ~`Non-Residential Capacity (Cumulative)`, name = 'Non-Residential') %>%
-  add_trace(y = ~`Grid Supply Capacity (Cumulative)`, name = 'Grid Supply') %>%
+            type = 'scatter', 
+            mode = 'lines+markers', 
+            name = 'Residential', 
+            line_color = colors2$res_cap_color) %>% 
+  add_trace(y = ~`Non-Residential Capacity (Cumulative)`, 
+            name = 'Non-Residential', 
+            line_color = colors2$nonres_cap_color) %>%
+  add_trace(y = ~`Grid Supply Capacity (Cumulative)`, 
+            name = 'Grid Supply',
+            line_color = colors2$gs_cap_color) %>%
   layout(yaxis = list(title = "Capacity (MW)"), 
          xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear', limits=c(2000,2021)),
          hovermode='x')
@@ -264,9 +401,16 @@ fig1
 
 ```{r}
 fig2 <- plot_ly(trend, x = ~Year, y = ~`Residential Capacity`,
-               type = 'scatter', mode = 'lines+markers', name = 'Residential') %>%
-  add_trace(y = ~`Non-Residential Capacity`, name = 'Non-Residential') %>%
-  add_trace(y = ~`Grid Supply Capacity`, name = 'Grid Supply') %>%
+            type = 'scatter', 
+            mode = 'lines+markers', 
+            name = 'Residential',
+            line_color = colors2$res_cap_color) %>%
+  add_trace(y = ~`Non-Residential Capacity`, 
+            name = 'Non-Residential',
+            line_color = colors2$nonres_cap_color) %>%
+  add_trace(y = ~`Grid Supply Capacity`, 
+            name = 'Grid Supply',
+            line_color = colors2$gs_cap_color) %>%
   layout(yaxis = list(title = "Capacity (MW)"),
          xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
          hovermode='x')
@@ -277,9 +421,16 @@ fig2
 
 ```{r}
 fig3 <- plot_ly(trend, x = ~Year, y = ~`Residential Quantity (Cumulative)`,
-               type = 'scatter', mode = 'lines+markers', name = 'Residential') %>%
-  add_trace(y = ~`Non-Residential Quantity (Cumulative)`, name = 'Non-Residential') %>%
-  add_trace(y = ~`Grid Supply Quantity (Cumulative)`, name = 'Grid Supply') %>%
+            type = 'scatter', 
+            mode = 'lines+markers', 
+            name = 'Residential',
+            line_color = colors2$res_cap_color) %>%
+  add_trace(y = ~`Non-Residential Quantity (Cumulative)`, 
+            name = 'Non-Residential',
+            line_color = colors2$nonres_cap_color) %>%
+  add_trace(y = ~`Grid Supply Quantity (Cumulative)`, 
+            name = 'Grid Supply',
+            line_color = colors2$gs_cap_color) %>%
   layout(yaxis = list(title = "Quantity"),
          xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
          hovermode='x')
@@ -290,90 +441,22 @@ fig3
 
 ```{r}
 fig4 <- plot_ly(trend, x = ~Year, y = ~`Residential Quantity`,
-               type = 'scatter', mode = 'lines+markers', name = 'Residential') %>%
-  add_trace(y = ~`Non-Residential Quantity`, name = 'Non-Residential') %>%
-  add_trace(y = ~`Grid Supply Quantity`, name = 'Grid Supply') %>%
+               type = 'scatter', 
+               mode = 'lines+markers', 
+               name = 'Residential',
+               line_color = colors2$res_cap_color) %>%
+  add_trace(y = ~`Non-Residential Quantity`, 
+            name = 'Non-Residential',
+            line_color = colors2$nonres_cap_color) %>%
+  add_trace(y = ~`Grid Supply Quantity`, 
+            name = 'Grid Supply',
+            line_color = colors2$gs_cap_color) %>%
   layout(yaxis = list(title = "Quantity"),
          xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
          hovermode='x')
 fig4
 ```
 
-Row {.tabset}
------------------------------------------------------------------------
-
-### Overall
-
-```{r}
-DT::renderDataTable({
-  DT::datatable(trend_trans,
-                class = 'compact nowrap cell-border stripe',
-                extensions = c('Responsive','Scroller','Buttons'), 
-                escape = FALSE, 
-                rownames = FALSE,
-                options = list(bPaginate = FALSE,
-                               ordering=FALSE,
-                               autoWidth = TRUE,
-                               scrollX=TRUE,
-                               searching = FALSE,
-                               buttons = c('colvis', 'excel')))
-})
-```
-
-### Residential
-
-```{r}
-DT::renderDataTable({
-  DT::datatable(trend_trans,
-                class = 'cell-border stripe',
-                extensions = 'Responsive', 
-                escape = FALSE, 
-                rownames = FALSE, 
-                options = list(bPaginate = FALSE,
-                               ordering=FALSE,
-                               autoWidth = TRUE,
-                               scrollX=TRUE,
-  columnDefs = list(list(width = '200px', targets = "_all"),
-                    list(className = 'dt-center', targets = "_all"))))
-})
-```
-
-
-### Non-Residential
-
-```{r}
-DT::renderDataTable({
-  DT::datatable(trend_trans,
-                class = 'cell-border stripe',
-                extensions = 'Responsive', 
-                escape = FALSE, 
-                rownames = FALSE, 
-                options = list(bPaginate = FALSE,
-                               ordering=FALSE,
-                               autoWidth = TRUE,
-                               scrollX=TRUE,
-  columnDefs = list(list(width = '200px', targets = "_all"),
-                    list(className = 'dt-center', targets = "_all"))))
-})
-```
-
-### Grid Supply
-
-```{r}
-DT::renderDataTable({
-  DT::datatable(trend_trans,
-                class = 'cell-border stripe',
-                extensions = 'Responsive', 
-                escape = FALSE, 
-                rownames = FALSE, 
-                options = list(bPaginate = FALSE,
-                               ordering=FALSE,
-                               autoWidth = TRUE,
-                               scrollX=TRUE,
-  columnDefs = list(list(width = '200px', targets = "_all"),
-                    list(className = 'dt-center', targets = "_all"))))
-})
-```
 
 
 Residential Landscape
@@ -411,7 +494,7 @@ renderValueBox({
 renderValueBox({
   total_rate <- paste(prettyNum(100*Overall_Adoption_Rate[1,4], digits= 3)," %")
   valueBox(total_rate,
-           icon = "fa-house-user",
+           icon = "glyphicon-home",
            color = "#6baed6")
 })
 ```
@@ -470,6 +553,7 @@ addLegend(data = Solar_Res_County, # the dataset
             pal = pal4, values = ~COUNT, # specify the color palette and the range of values 
             title = "Quantity", # legend title
             opacity = 1.0) 
+
 
 map4
 
