@@ -1,6 +1,8 @@
-# Data Visualization Final Project
- NJ Solar Dashboard
+Welcome,
 
-This is our github repository for our final project in Data Visualization using R (Spring 2022).
+This is our github for our dashboard on solar adoption in NJ.
 
-We're planning on building a dashboard to show various metrics on NJ Solar installations.
+Feel free to download the repository if you would like to play around under the hood. Begin by running all of the data management code in the Data Management folder (in order please!). Then head over to the Data Files for Analysis folder where you can find the code for the dashboard itself. 
+
+Here is a link to the dashboard itself:
+https://psimran-singh.shinyapps.io/NJSolarAdoptionDashboard/
