@@ -5,7 +5,7 @@ output:
     theme: default
     orientation: rows
     source_code: "https://github.com/psimran-singh/Data-Visualization-Final-Project"
-    vertical_layout: scroll
+    vertical_layout: fill
 runtime: shiny
 
 ---
@@ -25,6 +25,10 @@ library(RColorBrewer)
 library(leaflet)
 library(htmltools)
 
+<<<<<<< Updated upstream
+=======
+# Load in all the necessary data tables:
+>>>>>>> Stashed changes
 setwd("~/Data Viz in R/Data-Visualization-Final-Project/Data Files for Analysis")
 
 ## Section 1: Overall Landscape ##
@@ -46,6 +50,10 @@ trend_yoy <- read_csv('Trend_Percents.csv')
 ## Section 3: Analysis ##
 # Load in all the data we need
 zip_level_res <- read_csv("Residential_Solar_Zip.csv")
+income_trend <- read_csv("Trendline For Income.csv")
+own_trend <- read_csv("Trendline For House Ownership.csv")
+val_trend <- read_csv("Trendline For Housing Value.csv")
+white_trend <- read_csv("Trendline For White Population.csv")
 
 ```
 
@@ -390,106 +398,106 @@ DT::renderDataTable({
 })
 ```
 
+<<<<<<< Updated upstream
 Analysis
 =====================================
 
 Row {.tabset}
 -----------------------------------------------------------------------
+=======
 
-Adoption  Rate as the Independent Variable
+Analysis {.storyboard}
+=========================================
+>>>>>>> Stashed changes
 
-### Income
+Click the arrows or the boxes to learn how the solar adoption rate and third party ownership of solar is affected by different factors
+
+### Areas with a median household income between 50k - 100k have the highest rate of solar adoption, but those with a higher income are more likely to own their solar installment. 
 
 ```{r}
-fig_income <- plot_ly(zip_level_res, x = zip_level_res$`Income`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+fig_income <- plot_ly() %>%
+  add_trace(zip_level_res, x = zip_level_res$`Income`, y = zip_level_res$`Adoption_Rate`, type = "scatter", marker = list(color = zip_level_res$`TPO_FREQ`, colorbar = list(title = "Third Party Installment Rate"), color=list("Viridis"))) %>%
+  add_trace(x = income_trend$`x`, y = income_trend$`y`, mode = "lines", line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
   layout(yaxis = list(title = "Solar Adoption Rate"),
          xaxis = list(title = "Income"),
-         text = list(title = "Using Zip Code Level Data"))
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
 
 fig_income
 ```
 
-### Percent of Male Population
+***
+
+Research shows that solar adoption tends to cluster around the higher-income areas where there was early adoption of solar back in the days when it was more expensive. As solar installation prices have gone down, solar adoption hasn’t spread to lower-income households despite the tremendous benefits they would get from having cheaper utility bills [source](https://www.nature.com/articles/s41560-020-00724-2).
+
+This chart shows that solar adoption is more popular among those areas with moderate incomes than those with higher incomes in New Jersey. Perhaps New Jersey's solar tax credits and rebates are encouraging a more equitable adoption of solar [source](https://www.sunrun.com/solar-by-state/nj/new-jersey-solar-tax-incentives). Those with moderate incomes are also probably seeking a lower utility bill rather than those who are wealthier. It also seems like those who are installing solar at low-to-moderate incomes are going more with third party installment rather than installing the solar panels themselves.
+
+### Areas where the houses are valued lower are more likely to adopt solar and also more likely to have a third party own the solar installment.
 
 ```{r}
-fig_perc_male <- plot_ly(zip_level_res, x = zip_level_res$`Perc_Male`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+fig_perc_val <- plot_ly() %>%
+add_trace(zip_level_res, x = zip_level_res$`House_Value`, y = zip_level_res$`Adoption_Rate`, type = "scatter", marker = list(color = zip_level_res$`TPO_FREQ`, colorbar = list(title = "Third Party Installment Rate"))) %>% 
+  add_trace(x = own_trend$`x`, y = own_trend$`y`, mode = "lines", line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
   layout(yaxis = list(title = "Solar Adoption Rate"),
-         xaxis = list(title = "Percent of Population That's Male"),
-         text = list(title = "Using Zip Code Level Data"))
+         xaxis = list(title = "Housing Value"),
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
 
-fig_perc_male
+fig_perc_val
 ```
 
-### Percent of White Population
+***
+
+In New Jersey, homes with solar panels can sell for 9.9% more than homes without solar-energy systems which is a profit of $32,281 for the median-values home in New Jersey [source](https://www.cnbc.com/2019/10/05/solar-power-can-boost-a-homes-value-in-these-10-states-the-most.html#:~:text=In%20New%20Jersey%2C%20homes%20with,valued%20home%20in%20that%20state.). Investing in solar can also help homeowners save on energy costs.
+
+This chart shows that homes that are valued relatively lower are adopting solar in New Jersey. Perhaps they are adopting solar to increase their housing value, while higher valued homes don't feel the need to adopt solar to increase their housing value. Home with higher values own their solar installment. 
+
+
+### Areas with a higher percentage of white residents have a higher rate of solar adoption and are more likely to own their own solar installments. 
+
 
 ```{r}
-fig_perc_white <- plot_ly(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+fig_perc_white <- plot_ly() %>%
+  add_trace(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`Adoption_Rate`, type = "scatter", marker = list(color = zip_level_res$`TPO_FREQ`, colorbar = list(title = "Third Party Installment Rate"))) %>% 
+  add_trace(x = white_trend$`x`, y = white_trend$`y`, mode = "lines", line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
   layout(yaxis = list(title = "Solar Adoption Rate"),
-         xaxis = list(title = "Percent of Population That's White"),
-         text = list(title = "Using Zip Code Level Data"))
+         xaxis = list(title = "Percent of White Residents"),
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
 
 fig_perc_white
 
 ```
 
-### Percent of Owned Houses
+***
+
+Research shows that solar adoption has been affected by language barriers [source](https://www.nature.com/articles/s41560-020-00724-2). This can affect communities with predominately minority residents that are more likely to not speak English. 
+
+The chart support this trend since those communities with a higher percentage of white residents are adopting solar more than communities with a higher percentage of minority residents. Solar adoption is influenced by customer referrals and localized installer marketing, therefore it's likely that minorities are being left out of the conversation. 
+
+
+### In areas that have a higher percentage of people who own their house rather rent, there is a higher rate of solar adoption and a higher rate of owning their own solar installment. 
 
 ```{r}
-fig_perc_house_owned <- plot_ly(zip_level_res, x = zip_level_res$`Perc_House_Owned`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+x_sort_own <- sort(zip_level_res$Perc_House_Owned)
+y_sort_own <-zip_level_res$Adoption_Rate[order(zip_level_res$Perc_House_Owned)]
+
+loess_fit_own <- loess(y_sort_own ~ x_sort_own)
+rl_own <- predict(loess_fit_own)
+
+fig_perc_house_owned <- plot_ly() %>%
+  add_trace(zip_level_res, x = zip_level_res$`Perc_House_Owned`, y = zip_level_res$`Adoption_Rate`, type = "scatter", marker = list(color = zip_level_res$`TPO_FREQ`, colorbar = list(title = "Third Party Installment Rate"))) %>% 
+  add_trace(x = val_trend$`x`, y = val_trend$`y`, mode = "lines", line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
   layout(yaxis = list(title = "Solar Adoption Rate"),
          xaxis = list(title = "Percent of Population That Owns Their House"),
-         text = list(title = "Using Zip Code Level Data"))
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
 
 fig_perc_house_owned
 ```
 
+***
 
-Row {.tabset}
------------------------------------------------------------------------
+A barrier to solar adoption is home ownership, and this can exclude low and moderate income families from benefiting [source](https://www.hammondclimatesolutions.com/blog/overcoming-barriers-to-solar-adoption-in-communities-of-concern). In 2018, New Jersey authorized a Community Solar Energy Pilot Program that allows residents to participate in community solar energy projects and get credit on their utility bills [source](https://earthjustice.org/news/press/2018/lawmakers-approve-bill-allowing-nj-renters-apartment-dwellers-to-access-solar-power). 
 
-Capacity as the Independent Variable
-
-### Income
-
-```{r}
-fig_income_c <- plot_ly(zip_level_res, x = zip_level_res$`Income`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
-  layout(yaxis = list(title = "Total Capacity"),
-         xaxis = list(title = "Income"),
-         text = list(title = "Using Zip Code Level Data"))
-
-fig_income_c
-```
-
-### Percent of Male Population
-
-```{r}
-fig_perc_male_c <- plot_ly(zip_level_res, x = zip_level_res$`Perc_Male`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
-  layout(yaxis = list(title = "Total Capacity"),
-         xaxis = list(title = "Percent of Population That's Male"),
-         text = list(title = "Using Zip Code Level Data"))
-
-fig_perc_male_c
-```
-
-### Percent of White Population
-
-```{r}
-fig_perc_white_c <- plot_ly(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
-  layout(yaxis = list(title = "Total Capacity"),
-         xaxis = list(title = "Percent of Population That's White"),
-         text = list(title = "Using Zip Code Level Data"))
-
-fig_perc_white_c
-
-```
-
-### Percent of Owned Houses
-
-```{r}
-fig_perc_house_owned_c <- plot_ly(zip_level_res, x = zip_level_res$`Perc_House_Owned`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
-  layout(yaxis = list(title = "Total Capacity"),
-         xaxis = list(title = "Percent of Population That Owns Their House"),
-         text = list(title = "Using Zip Code Level Data"))
-
-fig_perc_house_owned_c
-```
+This chart shows that areas with higher home ownership rates are more likely to install solar, but projects like the Community Solar Energy Pilot Project can take a while to build - especially after COVID.

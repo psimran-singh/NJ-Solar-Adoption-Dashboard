@@ -30,7 +30,7 @@ Solar_Res_County["COUNTY_CODE"] = as.integer(names(county_dict))
 
 #Get zip data from ACS
 zip_income <- get_acs(variables = "DP03_0062E", geography = "zip code tabulation area", state = "NJ", survey = "acs5", year = 2019)
-zip_perc_male <- get_acs(variables = "DP05_0002PE", geography = "zip code tabulation area", state = "NJ", survey = "acs5", year = 2019)
+zip_hous_val <- get_acs(variables = "DP04_0089E", geography = "zip code tabulation area", state = "NJ", survey = "acs5", year = 2019)
 zip_perc_white <- get_acs(variables = "DP05_0037PE", geography = "zip code tabulation area", state = "NJ", survey = "acs5", year = 2019)
 zip_total_house <- get_acs(variables = "DP04_0002E", geography = "zip code tabulation area", state = "NJ", survey = "acs5", year = 2019)
 zip_owner_house <- get_acs(variables = "DP04_0046E", geography = "zip code tabulation area", state = "NJ", survey = "acs5", year = 2019)
@@ -47,13 +47,14 @@ Solar_Res_County$Adoption_Rate <- Solar_Res_County$COUNT/Solar_Res_County$Total_
 #Combine the zip demographics with solar data
 Solar_Res_Zip$Income <- zip_income$estimate[match(Solar_Res_Zip$ZIP,zip_income$GEOID)]
 Solar_Res_Zip$Perc_White <- zip_perc_white$estimate[match(Solar_Res_Zip$ZIP,zip_perc_white$GEOID)]
-Solar_Res_Zip$Perc_Male <- zip_perc_male$estimate[match(Solar_Res_Zip$ZIP,zip_perc_male$GEOID)]
+Solar_Res_Zip$House_Value <- zip_hous_val$estimate[match(Solar_Res_Zip$ZIP,zip_hous_val$GEOID)]
 Solar_Res_Zip$Total_Occ_House <- zip_total_house$estimate[match(Solar_Res_Zip$ZIP,zip_total_house$GEOID)]
 Solar_Res_Zip$Adoption_Rate <- Solar_Res_Zip$COUNT/Solar_Res_Zip$Total_Occ_House
 Solar_Res_Zip$Total_Own_House <- zip_owner_house$estimate[match(Solar_Res_Zip$ZIP,zip_owner_house$GEOID)]
 Solar_Res_Zip$Total_Rent_House <- zip_renter_house$estimate[match(Solar_Res_Zip$ZIP,zip_renter_house$GEOID)]
 Solar_Res_Zip$Perc_House_Owned <- Solar_Res_Zip$Total_Own_House/Solar_Res_Zip$Total_Occ_House
 Solar_Res_Zip$Perc_House_Rented <- Solar_Res_Zip$Total_Rent_House/Solar_Res_Zip$Total_Occ_House
+Solar_Res_Zip$TPO_FREQ <- Solar_TPO_Zip$TPO_FREQ[match(Solar_Res_Zip$ZIP, Solar_TPO_Zip$ZIP)]
 
 #Clean up Solar_Res_Zip Dataset for Analysis
 Solar_Res_Zip <- Solar_Res_Zip %>%
@@ -61,13 +62,10 @@ Solar_Res_Zip <- Solar_Res_Zip %>%
   drop_na() %>%
   filter(Income > 0)
 
-#Combine zip housing data
-zip_total_house$Owner_Occ_Houses <- zip_owner_house$estimate[match(zip_total_house$GEOID,zip_owner_house$GEOID)]
-zip_total_house$Renter_Occ_Houses <- zip_renter_house$estimate[match(zip_total_house$GEOID,zip_renter_house$GEOID)]
-zip_housing <- zip_total_house %>%
-  rename(Total_Occ_Houses = estimate, ZIP = GEOID) %>%
-  subset(select = -c(NAME, variable, moe))
-
 #Remove census datasets from global environment
+<<<<<<< Updated upstream
 remove(zip_income, zip_perc_male, zip_perc_white, zip_total_house, zip_owner_house, zip_renter_house, county_dict, county_income, county_perc_male, county_perc_white, county_total_house)
 
+=======
+remove(zip_income, zip_hous_val, zip_perc_white, zip_total_house, zip_owner_house, zip_renter_house, county_dict, county_income, county_perc_male, county_perc_white, county_total_house)
+>>>>>>> Stashed changes
