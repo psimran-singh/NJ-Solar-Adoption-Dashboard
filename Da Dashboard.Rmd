@@ -5,7 +5,7 @@ output:
     theme: "lumen"
     orientation: rows
     source_code: "https://github.com/psimran-singh/Data-Visualization-Final-Project"
-    vertical_layout: scroll
+    vertical_layout: fill
 runtime: shiny
 
 ---
@@ -52,6 +52,14 @@ Overall_Adoption_Rate <- Solar_Res_County %>% st_drop_geometry() %>%
 
 ## Section 4: Residential Analysis ###
 zip_level_res <- read_csv("Residential_Solar_Zip.csv")
+
+## Section 3: Analysis ##
+# Load in all the data we need
+zip_level_res <- read_csv("Residential_Solar_Zip.csv")
+income_trend <- read_csv("Trendline For Income.csv")
+own_trend <- read_csv("Trendline For House Ownership.csv")
+val_trend <- read_csv("Trendline For Housing Value.csv")
+white_trend <- read_csv("Trendline For White Population.csv")
 
 ```
 
@@ -506,8 +514,8 @@ Row
 ### Total Residential Rooftop Capacity by County
 
 ```{r}
-pal3 <- colorBin(palette = "Oranges", domain = Solar_Res_County$CAPACITY_MW)
-labs3 <- as.list(paste(Solar_Res_County$COUNTY,round(Solar_Res_County$CAPACITY_MW)," MW"))
+pal3 <- colorBin(palette = "Oranges", domain = Solar_Res_County$CAPACITY)
+labs3 <- as.list(paste(Solar_Res_County$COUNTY,round(Solar_Res_County$CAPACITY)," MW"))
   
 map3 <- leaflet(options = leafletOptions(zoomControl = FALSE,
                                              dragging = FALSE,
@@ -516,13 +524,13 @@ map3 <- leaflet(options = leafletOptions(zoomControl = FALSE,
 addPolygons(data = Solar_Res_County,
               label = lapply(labs3, HTML), # hover label
               color = "grey", # the color of the border
-              fillColor = ~pal3(Solar_Res_County$CAPACITY_MW), # the colors inside the polygons
+              fillColor = ~pal3(Solar_Res_County$CAPACITY), # the colors inside the polygons
               weight = 1.0, # the thickness of the border lines
               opacity = 1.0, # the transparency of the border lines
               fillOpacity = 1.0) %>%
 addLegend(data = Solar_Res_County, # the dataset
             "bottomright", # where to put the legend
-            pal = pal3, values = ~CAPACITY_MW, # specify the color palette and the range of values 
+            pal = pal3, values = ~CAPACITY, # specify the color palette and the range of values 
             title = "Capacity (MW)", # legend title
             opacity = 1.0) 
 
@@ -588,106 +596,141 @@ map5
 ```
 
 
-Analysis
-=====================================
+Residential Adoption Analysis {.storyboard}
+=========================================
 
-Row {.tabset}
+Current Landscape {.sidebar}
 -----------------------------------------------------------------------
+Literature suggests that there exists a significant socio-economic disparity among residential solar adopters.  
 
-Adoption  Rate as the Independent Variable
+Observe in this tab how factors like Income, Race, Housing Value, Housing Ownership, and Third-Party Ownership of solar installations relate to solar adoption rates.  
 
-### Income
+Every point on the scatter plot represents a zip code in NJ.
+
+Income is represented by the median income for each zip code.  
+
+Race is represented by the proportion of white residents in a zip code.  
+
+Housing Value is represented by the median housing value in a zip code.
+
+Housing Ownership is represented by the proportion of owner-occupied housing units in a zip code.  
+
+Third-Party Ownership is represented by the proportion of rooftop residential solar installations in a zip code that are owned by a third party (other than the resident). Typically, these are companies that install solar on a resident's rooftop for $0 down upfront but with a multi-year lease. This allows a resident to benefit from reduced energy costs, while the company benefits from available incentives and credits. This method of solar adoption has become increasingly popular in recent years. 
+
+### Areas with a median household income between $50k - $100k have the highest rate of solar adoption, but those with a higher income are more likely to own their solar installment. 
 
 ```{r}
-fig_income <- plot_ly(zip_level_res, x = zip_level_res$`Income`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+fig_income <- plot_ly() %>%
+  add_trace(zip_level_res, x = zip_level_res$`Income`, y = zip_level_res$`Adoption_Rate`, 
+            type = "scatter", 
+            name = "",
+            marker = list(color = zip_level_res$`TPO_FREQ`, 
+                          colorbar = list(title = "TPO Rate"),
+                          colorscale="Viridis")) %>%
+  add_trace(x = income_trend$`x`, y = income_trend$`y`, mode = "lines", 
+            line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
   layout(yaxis = list(title = "Solar Adoption Rate"),
          xaxis = list(title = "Income"),
-         text = list(title = "Using Zip Code Level Data"))
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
 
 fig_income
 ```
 
-### Percent of Male Population
+***
+
+Research shows that current solar adoption is concentrated in higher-income areas, where early adopters could afford the higher upfront cost of solar installations. As solar installation prices have gone down, solar adoption hasn’t spread to lower-income households despite the tremendous benefits they would get from having cheaper utility bills [[1]](https://www.nature.com/articles/s41560-020-00724-2).
+
+This chart illustrates that solar adoption rates are higher in moderate income areas (\$50k-\$100k) than higher incomes (\$100k+)[[2]](https://www.sunrun.com/solar-by-state/nj/new-jersey-solar-tax-incentives). It is possible that higher adoption rates among moderate incomes residents are motivated by the desire to lower utility bills, which residents of wealthier areas may ignore. There is also a clear pattern illustrating how low-to-moderate income areas are relying on third party ownership models to gain access to solar energy, while higher income areas are more often investing the upfront cost themselves.
+
+### Areas with lower housing value have higher solar adoption and third party ownership rates.
 
 ```{r}
-fig_perc_male <- plot_ly(zip_level_res, x = zip_level_res$`Perc_Male`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+fig_perc_val <- plot_ly() %>%
+add_trace(zip_level_res, x = zip_level_res$`House_Value`, y = zip_level_res$`Adoption_Rate`, 
+          type = "scatter", 
+          name = "",
+          marker = list(color = zip_level_res$`TPO_FREQ`, 
+                        colorbar = list(title = "TPO Rate"),
+                        colorscale = "Viridis")) %>% 
+  add_trace(x = val_trend$`x`, y = val_trend$`y`, mode = "lines", 
+            line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
   layout(yaxis = list(title = "Solar Adoption Rate"),
-         xaxis = list(title = "Percent of Population That's Male"),
-         text = list(title = "Using Zip Code Level Data"))
+         xaxis = list(title = "Housing Value"),
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
 
-fig_perc_male
+fig_perc_val
 ```
 
-### Percent of White Population
+***
+
+In New Jersey, homes with solar panels can sell for 9.9% more than homes without solar installations, an additional $32,281 at median housing value in New Jersey [[3]](https://www.cnbc.com/2019/10/05/solar-power-can-boost-a-homes-value-in-these-10-states-the-most.html#:~:text=In%20New%20Jersey%2C%20homes%20with,valued%20home%20in%20that%20state.). Investing in solar can also help homeowners save on energy costs.
+
+This chart shows that areas with near-median housing value (~\$330,000) are adopting solar at relatively high rates. Investment in solar installations is proving valuable to homeowners, increasing housing value while decreasing energy costs. As expected, areas with higher value homes also see lower rates of third party ownership, typically because these homeowners can afford to pay for their systems up front. 
+
+
+### Areas with a higher percentage of white residents have a higher rate of solar adoption and are more likely to own their own solar installments. 
+
 
 ```{r}
-fig_perc_white <- plot_ly(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+fig_perc_white <- plot_ly() %>%
+  add_trace(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`Adoption_Rate`, 
+            type = "scatter", 
+            name = "",
+            marker = list(color = zip_level_res$`TPO_FREQ`, 
+                          colorbar = list(title = "TPO Rate"),
+                          colorscale = "Viridis")) %>% 
+  add_trace(x = white_trend$`x`, y = white_trend$`y`, mode = "lines", line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
   layout(yaxis = list(title = "Solar Adoption Rate"),
-         xaxis = list(title = "Percent of Population That's White"),
-         text = list(title = "Using Zip Code Level Data"))
+         xaxis = list(title = "Percent of White Residents"),
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
 
 fig_perc_white
 
 ```
 
-### Percent of Owned Houses
+***
+
+Research shows that solar adoption has been affected by language barriers [[4]](https://www.nature.com/articles/s41560-020-00724-2). Areas with larger populations of non-English speaking residents may be getting left behind in the transition to solar energy, as information about benefits and incentives may not be reaching them effectively. Solar adoption is influenced by customer referrals and localized installer marketing, therefore it's possible that minorities are being left out of these conversations.
+
+Furthermore, communities of color, regardless of native language, may not be receiving the benefits of renewable energy, while already wealthy white communities absorb the available incentives.
+
+The chart illustrates that solar adoption rates are higher in areas with larger proportions of white residents. 
+
+
+### In areas that have a higher rates of home ownership, there is a higher rate of solar adoption and a higher rate of owning their own solar installment. 
 
 ```{r}
-fig_perc_house_owned <- plot_ly(zip_level_res, x = zip_level_res$`Perc_House_Owned`, y = zip_level_res$`Adoption_Rate`, type = "scatter") %>% 
+x_sort_own <- sort(zip_level_res$Perc_House_Owned)
+y_sort_own <- zip_level_res$Adoption_Rate[order(zip_level_res$Perc_House_Owned)]
+
+loess_fit_own <- loess(y_sort_own ~ x_sort_own)
+rl_own <- predict(loess_fit_own)
+
+fig_perc_house_owned <- plot_ly() %>%
+  add_trace(zip_level_res, x = zip_level_res$`Perc_House_Owned`, 
+            y = zip_level_res$`Adoption_Rate`, 
+            name = "", 
+            type = "scatter", 
+            marker = list(color = zip_level_res$`TPO_FREQ`, 
+                          colorbar = list(title = "TPO Rate"),
+                          colorscale = "Viridis")) %>% 
+  add_trace(x = own_trend$`x`, y = own_trend$`y`, mode = "lines", 
+            line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
   layout(yaxis = list(title = "Solar Adoption Rate"),
          xaxis = list(title = "Percent of Population That Owns Their House"),
-         text = list(title = "Using Zip Code Level Data"))
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
 
 fig_perc_house_owned
 ```
 
+***
 
-Row {.tabset}
------------------------------------------------------------------------
+Low and moderate income families are less likely to own the homes they reside in. Investment incentives are very different for homeowners and rental property owners. If tenants pay their own utility bills, rental property owners are not incentivized to invest in solar panel installations to lower energy costs. Renters are typically low and moderate income, and are less likely to have access to the benefits of renewable energy, even though they seek to benefit the most. [[5]](https://www.hammondclimatesolutions.com/blog/overcoming-barriers-to-solar-adoption-in-communities-of-concern).  
 
-Capacity as the Independent Variable
+In order to address this gap, New Jersey authorized a Community Solar Energy Pilot Program that allows residents to participate in community solar energy projects and benefit from local solar installations, which sell them energy directly at a lower rate. [[6]](https://earthjustice.org/news/press/2018/lawmakers-approve-bill-allowing-nj-renters-apartment-dwellers-to-access-solar-power). 
 
-### Income
-
-```{r}
-fig_income_c <- plot_ly(zip_level_res, x = zip_level_res$`Income`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
-  layout(yaxis = list(title = "Total Capacity"),
-         xaxis = list(title = "Income"),
-         text = list(title = "Using Zip Code Level Data"))
-
-fig_income_c
-```
-
-### Percent of Male Population
-
-```{r}
-fig_perc_male_c <- plot_ly(zip_level_res, x = zip_level_res$`Perc_Male`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
-  layout(yaxis = list(title = "Total Capacity"),
-         xaxis = list(title = "Percent of Population That's Male"),
-         text = list(title = "Using Zip Code Level Data"))
-
-fig_perc_male_c
-```
-
-### Percent of White Population
-
-```{r}
-fig_perc_white_c <- plot_ly(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
-  layout(yaxis = list(title = "Total Capacity"),
-         xaxis = list(title = "Percent of Population That's White"),
-         text = list(title = "Using Zip Code Level Data"))
-
-fig_perc_white_c
-
-```
-
-### Percent of Owned Houses
-
-```{r}
-fig_perc_house_owned_c <- plot_ly(zip_level_res, x = zip_level_res$`Perc_House_Owned`, y = zip_level_res$`CAPACITY`, type = "scatter") %>% 
-  layout(yaxis = list(title = "Total Capacity"),
-         xaxis = list(title = "Percent of Population That Owns Their House"),
-         text = list(title = "Using Zip Code Level Data"))
-
-fig_perc_house_owned_c
-```
+As expected, the chart illustrates that areas with higher home ownership rates are more likely to install solar. This is driven by socioeconomic factors, difficulty of installing solar in highly urbanized areas, and the lack of incentives for landlords to invest in solar installations.
