@@ -1,0 +1,13 @@
+name: NJSolarAdoptionDashboard
+title: NJSolarAdoptionDashboard
+username:
+account: psimran-singh
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6250226
+bundleId: 5879709
+url: https://psimran-singh.shinyapps.io/NJSolarAdoptionDashboard/
+when: 1651876392.60522
+lastSyncTime: 1651876392.60522
+asMultiple: FALSE
+asStatic: FALSE

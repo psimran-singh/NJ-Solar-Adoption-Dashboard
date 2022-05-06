@@ -1,0 +1,779 @@
+---
+title: "Solar Adoption in NJ"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: "lumen"
+    orientation: rows
+    vertical_layout: scroll
+runtime: shiny
+
+---
+```{r global, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(shiny)
+library(plotly)
+library(formattable)
+library(DT)
+library(lubridate)
+library(xts)
+library(dygraphs)
+library(nivocal)
+library(sf)
+library(RColorBrewer)
+library(leaflet)
+library(htmltools)
+library(janitor)
+library(fontawesome)
+
+## Section 1: Overall Landscape ##
+load("Solar_All_County.Rda")
+county_level_rates <- read_csv('County_Totals.csv')
+county_level_sectors <- read_csv('County_Sectors.csv')
+Solar_All_County <- st_as_sf(Solar_All_County) %>% st_transform(4326)
+
+## Section 2: Overall Trends ## 
+trend <- read_csv('Trend.csv')
+trend_trans <- read_csv('Trend_Transposed.csv')
+trend_yoy <- read_csv('Trend_Percents.csv')
+
+## Section 3: Residential Landscape ##
+load("Solar_Res_County.Rda")
+Solar_Res_County <- st_as_sf(Solar_Res_County) %>% st_transform(4326) %>%
+  mutate(CAPACITY_MW=CAPACITY/1000)
+Overall_Adoption_Rate <- Solar_Res_County %>% st_drop_geometry() %>%  
+  select(COUNTY,COUNT,Total_Occ_House) %>%
+  adorn_totals("row") %>% filter(COUNTY=="Total") %>%
+  mutate(Adoption_Rate=COUNT/Total_Occ_House)
+
+## Section 4: Residential Analysis ###
+zip_level_res <- read_csv("Residential_Solar_Zip.csv")
+
+## Section 3: Analysis ##
+# Load in all the data we need
+zip_level_res <- read_csv("Residential_Solar_Zip.csv")
+income_trend <- read_csv("Trendline For Income.csv")
+own_trend <- read_csv("Trendline For House Ownership.csv")
+val_trend <- read_csv("Trendline For Housing Value.csv")
+white_trend <- read_csv("Trendline For White Population.csv")
+
+```
+
+```{r results="asis"}
+#Set Leaflet background colors white
+cat("
+<style>
+.leaflet-container {
+    background: #FFF;
+}
+</style>
+")
+
+#Full length datatables
+cat("
+<style>
+.dataTables_scrollBody {
+    height:400px !important;
+    max-height:400px !important;
+}
+.chart-stage-flex {
+    overflow:auto !important;
+}
+</style>
+")
+
+#Make the colors for the sector level tables
+county_level_sectors0 <- county_level_sectors %>% filter(County!="Overall")
+
+colors <- county_level_sectors0 %>%
+    select(County) %>%
+    mutate(res_cap_color = "#2479b6") %>%
+    mutate(nonres_cap_color = "#f57d13") %>%
+    mutate(gs_cap_color = "#379531") %>%
+    mutate(res_quant_color = "#2479b6") %>%
+    mutate(nonres_quant_color = "#f57d13") %>%
+    mutate(gs_quant_color = "#379531")
+
+colors2 <- colors %>% select(-County) %>% slice_head(n=1)
+```
+
+Overall Landscape
+=====================================
+
+Row
+-----------------------------------------------------------------------
+
+### Total Installed Solar Capacity
+
+```{r}
+renderValueBox({
+  total_cap <- paste(prettyNum(county_level_rates[county_level_rates$County=="Overall",4],big.mark=",",digits=0)," MW")
+  valueBox(total_cap, 
+           icon = "fa-sun",
+           color = "#FD8D3C")
+})
+```
+
+### Total Installed Solar Projects
+
+```{r}
+renderValueBox({
+  total_quant <- paste(prettyNum(county_level_rates[county_level_rates$County=="Overall",2], big.mark=","))
+  valueBox(total_quant,
+           icon = "fa-solar-panel",
+           color = "#74C476")
+})
+```
+
+Row
+-----------------------------------------------------------------------
+### Total Installed Capacity by County
+
+```{r}
+
+pal1 <- colorBin(palette = "Oranges", domain = Solar_All_County$capacity_mw)
+labs1 <- as.list(paste(Solar_All_County$County,round(Solar_All_County$capacity_mw)," MW"))
+  
+map1 <- leaflet(options = leafletOptions(zoomControl = FALSE,
+                                             dragging = FALSE,
+                                             minZoom = 7.3,
+                                             maxZoom = 7.3)) %>%
+  addPolygons(data = Solar_All_County,
+              label = lapply(labs1, HTML), # hover label
+              color = "grey", # the color of the border
+              fillColor = ~pal1(Solar_All_County$capacity_mw), # the colors inside the polygons
+              weight = 1.0, # the thickness of the border lines
+              opacity = 1.0, # the transparency of the border lines
+              fillOpacity = 1.0) %>%
+  addLegend(data = Solar_All_County, # the dataset
+            "bottomright", # where to put the legend
+            pal = pal1, values = ~capacity_mw, # specify the color palette and the range of values 
+            title = "Capacity (MW)", # legend title
+            opacity = 1.0)
+map1
+
+```
+
+
+### Total Installed Quantity by County
+
+```{r}
+pal2 <- colorBin(palette = "Greens", domain = Solar_All_County$quantity, 6)
+labs2 <- as.list(paste(Solar_All_County$County,
+                         prettyNum(Solar_All_County$quantity,big.mark=",",digits=1)))
+  
+  
+map2 <- leaflet(options = leafletOptions(zoomControl = FALSE,
+                                             dragging = FALSE,
+                                             minZoom = 7.3,
+                                             maxZoom = 7.3)) %>%
+  addPolygons(data = Solar_All_County,
+              label = lapply(labs2,HTML), # hover label
+              color = "grey", # the color of the border
+              fillColor = ~pal2(Solar_All_County$quantity), # the colors inside the polygons
+              weight = 1.0, # the thickness of the border lines
+              opacity = 1.0, # the transparency of the border lines
+              fillOpacity = 1.0) %>%
+  addLegend(data = Solar_All_County, # the dataset
+            "bottomright", # where to put the legend
+            pal = pal2, values = ~quantity, # specify the color palette and the range of values 
+            title = "# of Projects", # legend title
+            opacity = 1.0) 
+
+map2
+
+```
+
+
+
+Overall Landscape by Sector 
+=====================================
+
+Current Landscape {.sidebar}
+-----------------------------------------------------------------------
+
+Solar energy is playing a significant role in shifting New Jersey's energy economy away from fossil fuels and towards renewables. This transition is occuring across various sectors of energy consumers.
+
+The major sectors of solar energy are Residential, Non-Residential, and Grid Supply.
+
+  -Residential solar energy consists primarily of small (~10kW) net-metered rooftop installations.  
+
+  -Non-Residential, which covers commercial, farm, and government installations, are typically larger (~200kW) net-metered rooftop solar panel installations.  
+
+  -Grid Supply projects, consist of very large (~6600kW) ground-mounted installations.
+
+Row
+-----------------------------------------------------------------------
+
+### Total Installed Residential Capacity
+
+```{r}
+renderValueBox({
+  total_cap <- paste(prettyNum(county_level_sectors[
+    county_level_sectors$County=="Overall",3]/1000,
+                     big.mark=",",
+                     digits=4)," MW")
+  valueBox(total_cap, 
+           icon = "glyphicon-home",
+           color = colors2$res_cap_color)
+})
+```
+
+### Total Installed Non-Residential Capacity
+
+```{r}
+renderValueBox({
+  total_quant <- paste(prettyNum(county_level_sectors[
+    county_level_sectors$County=="Overall",5]/1000, 
+                       big.mark=",",
+                       digits=4), " MW")
+  valueBox(total_quant,
+           icon = "fa-industry",
+           color = colors2$nonres_cap_color)
+})
+```
+
+### Total Installed Grid Supply Capacity
+
+```{r}
+renderValueBox({
+  total_quant <- paste(prettyNum(county_level_sectors[
+    county_level_sectors$County=="Overall",7]/1000, 
+                       big.mark=",",
+                       digits=3), " MW")
+  valueBox(total_quant,
+           icon = "fa-solar-panel",
+           color = colors2$gs_cap_color)
+})
+```
+
+Row
+-------------------------------------
+
+### Total Installed Capacity by Sector and County
+
+```{r}
+fig1 <- plot_ly(county_level_sectors0,
+               x = county_level_sectors0$`County`,
+               y = (county_level_sectors0$`cap_res`/1000),
+               type = "bar",
+               name = "Residential",
+               marker = list(color = colors$res_cap_color))  %>%
+  add_trace(y = (county_level_sectors0$`cap_nonres`/1000),
+            name = 'Non-Residential',
+            marker = list(color = colors$nonres_cap_color))  %>%
+  add_trace(y = (county_level_sectors0$`cap_gs`/1000),
+            name = 'Grid Supply',
+            marker = list(color = colors$gs_cap_color))  %>%
+  layout(yaxis = list(title = "Capacity (MW)"),
+         xaxis = list(title = "Year",
+                      tickangle = -45,
+                      tickmode = 'linear',
+                      categoryorder = "total descending"),
+         hovermode='x',
+         barmode = "stack")
+fig1
+
+```
+
+Row
+------------------------------------------------
+
+### Total Installed Residential Projects
+
+```{r}
+renderValueBox({
+  total_cap <- paste(prettyNum(county_level_sectors[county_level_sectors$County=="Overall",2],
+                     big.mark=",",
+                     digits=4))
+  valueBox(total_cap, 
+           icon = "glyphicon-home",
+           color = colors2$res_quant_color)
+})
+```
+
+### Total Installed Non-Residential Projects
+
+```{r}
+renderValueBox({
+  total_quant <- paste(prettyNum(county_level_sectors[county_level_sectors$County=="Overall",4],
+                       big.mark=",",
+                       digits=4))
+  valueBox(total_quant,
+           icon = "fa-industry",
+           color = colors2$nonres_quant_color)
+})
+```
+
+### Total Installed Grid Supply Projects
+
+```{r}
+renderValueBox({
+  total_quant <- paste(prettyNum(county_level_sectors[county_level_sectors$County=="Overall",6],
+                       big.mark=",",
+                       digits=4))
+  valueBox(total_quant,
+           icon = "fa-solar-panel",
+           color = colors2$gs_quant_color)
+})
+```
+
+Row
+---------------------------------
+
+### Total Installed Quantity by Sector and County
+
+```{r}
+fig2 <- plot_ly(county_level_sectors0,
+               x = county_level_sectors0$`County`,
+               y = (county_level_sectors0$`quant_res`),
+               type = "bar",
+               name = "Residential",
+               marker = list(color = colors$res_quant_color))  %>%
+  add_trace(y = (county_level_sectors0$`quant_nonres`),
+            name = 'Non-Residential',
+            marker = list(color = colors$nonres_quant_color))  %>%
+  add_trace(y = (county_level_sectors0$`quant_gs`),
+            name = 'Grid Supply',
+            marker = list(color = colors$gs_quant_color))  %>%
+  layout(yaxis = list(title = "Quantity"),
+         xaxis = list(title = "Year",
+                      tickangle = -45,
+                      tickmode = 'linear',
+                      categoryorder = "total descending"),
+         hovermode='x',
+         barmode = "stack")
+fig2
+
+```
+
+
+
+Overall Trends 
+=====================================
+
+Row
+-----------------------------------------------------------------------
+
+### Year over Year Installed Capacity Growth (2020-2021)
+
+```{r}
+renderValueBox({
+  cap_yoy <- paste(prettyNum(trend_yoy[22,9],big.mark=",",digits=2))
+  valueBox(cap_yoy, 
+     icon = "fa-sun",
+     color = "#FD8D3C")
+})
+```
+
+### Year over Year Project Quantity Growth (2020-2021)
+
+```{r}
+renderValueBox({
+  quant_yoy <- paste(prettyNum(trend_yoy[22,17],big.mark=",",digits=2))
+  valueBox(quant_yoy,
+           icon = "fa-solar-panel",
+           color = "#74C476")
+})
+```
+
+
+Row {.tabset}
+-----------------------------------------------------------------------
+
+### Cumulative Capacity Trend
+
+```{r}
+fig1 <- plot_ly(trend, x = ~Year, y = ~`Residential Capacity (Cumulative)`,
+            type = 'scatter', 
+            mode = 'lines+markers', 
+            name = 'Residential', 
+            line_color = colors2$res_cap_color) %>% 
+  add_trace(y = ~`Non-Residential Capacity (Cumulative)`, 
+            name = 'Non-Residential', 
+            line_color = colors2$nonres_cap_color) %>%
+  add_trace(y = ~`Grid Supply Capacity (Cumulative)`, 
+            name = 'Grid Supply',
+            line_color = colors2$gs_cap_color) %>%
+  layout(yaxis = list(title = "Capacity (MW)"), 
+         xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear', limits=c(2000,2021)),
+         hovermode='x')
+fig1
+```
+
+### Yearly Capacity Growth Trend
+
+```{r}
+fig2 <- plot_ly(trend, x = ~Year, y = ~`Residential Capacity`,
+            type = 'scatter', 
+            mode = 'lines+markers', 
+            name = 'Residential',
+            line_color = colors2$res_cap_color) %>%
+  add_trace(y = ~`Non-Residential Capacity`, 
+            name = 'Non-Residential',
+            line_color = colors2$nonres_cap_color) %>%
+  add_trace(y = ~`Grid Supply Capacity`, 
+            name = 'Grid Supply',
+            line_color = colors2$gs_cap_color) %>%
+  layout(yaxis = list(title = "Capacity (MW)"),
+         xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
+         hovermode='x')
+fig2
+```
+
+### Cumulative Quantity Trend
+
+```{r}
+fig3 <- plot_ly(trend, x = ~Year, y = ~`Residential Quantity (Cumulative)`,
+            type = 'scatter', 
+            mode = 'lines+markers', 
+            name = 'Residential',
+            line_color = colors2$res_cap_color) %>%
+  add_trace(y = ~`Non-Residential Quantity (Cumulative)`, 
+            name = 'Non-Residential',
+            line_color = colors2$nonres_cap_color) %>%
+  add_trace(y = ~`Grid Supply Quantity (Cumulative)`, 
+            name = 'Grid Supply',
+            line_color = colors2$gs_cap_color) %>%
+  layout(yaxis = list(title = "Quantity"),
+         xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
+         hovermode='x')
+fig3
+```
+
+### Yearly Quantity Growth Trend
+
+```{r}
+fig4 <- plot_ly(trend, x = ~Year, y = ~`Residential Quantity`,
+               type = 'scatter', 
+               mode = 'lines+markers', 
+               name = 'Residential',
+               line_color = colors2$res_cap_color) %>%
+  add_trace(y = ~`Non-Residential Quantity`, 
+            name = 'Non-Residential',
+            line_color = colors2$nonres_cap_color) %>%
+  add_trace(y = ~`Grid Supply Quantity`, 
+            name = 'Grid Supply',
+            line_color = colors2$gs_cap_color) %>%
+  layout(yaxis = list(title = "Quantity"),
+         xaxis = list(title = "Year", tickangle = -45, tickmode = 'linear'),
+         hovermode='x')
+fig4
+```
+
+
+
+Residential Landscape
+=====================================
+
+Row
+-----------------------------------------------------------------------
+
+### Current Installed Residential Rooftop Solar Capacity
+
+```{r}
+renderValueBox({
+  total_cap <- paste(prettyNum(county_level_sectors[county_level_sectors$County=="Overall",3]/1000,
+                               big.mark=",",digits=0)," MW")
+  valueBox(total_cap, 
+           icon = "fa-sun",
+           color = "#FD8D3C")
+})
+```
+
+### Current Installed Residential Rooftop Solar Projects
+
+```{r}
+renderValueBox({
+  total_quant <- paste(prettyNum(county_level_sectors[county_level_sectors$County=="Overall",2], big.mark=","))
+  valueBox(total_quant,
+           icon = "fa-solar-panel",
+           color = "#74C476")
+})
+```
+
+### Current Residential Rooftop Adoption Rate
+
+```{r}
+renderValueBox({
+  total_rate <- paste(prettyNum(100*Overall_Adoption_Rate[1,4], digits= 3)," %")
+  valueBox(total_rate,
+           icon = "glyphicon-home",
+           color = "#6baed6")
+})
+```
+
+
+Row 
+-----------------------------------------------------------------------
+
+### Total Residential Rooftop Capacity by County
+
+```{r}
+pal3 <- colorBin(palette = "Oranges", domain = Solar_Res_County$CAPACITY)
+labs3 <- as.list(paste(Solar_Res_County$COUNTY,round(Solar_Res_County$CAPACITY)," MW"))
+  
+map3 <- leaflet(options = leafletOptions(zoomControl = FALSE,
+                                             dragging = FALSE,
+                                             minZoom = 7.3,
+                                             maxZoom = 7.3)) %>%
+addPolygons(data = Solar_Res_County,
+              label = lapply(labs3, HTML), # hover label
+              color = "grey", # the color of the border
+              fillColor = ~pal3(Solar_Res_County$CAPACITY), # the colors inside the polygons
+              weight = 1.0, # the thickness of the border lines
+              opacity = 1.0, # the transparency of the border lines
+              fillOpacity = 1.0) %>%
+addLegend(data = Solar_Res_County, # the dataset
+            "bottomright", # where to put the legend
+            pal = pal3, values = ~CAPACITY, # specify the color palette and the range of values 
+            title = "Capacity (MW)", # legend title
+            opacity = 1.0) 
+
+map3
+
+```
+
+### Total Residential Rooftop Quantity by County
+
+```{r}
+pal4 <- colorBin(palette = "Greens", domain = Solar_Res_County$COUNT, 6)
+labs4 <- as.list(paste(Solar_Res_County$COUNTY,
+                         prettyNum(Solar_Res_County$COUNT,big.mark=",",digits=1)))
+  
+map4 <- leaflet(options = leafletOptions(zoomControl = FALSE,
+                                             dragging = FALSE,
+                                             minZoom = 7.3,
+                                             maxZoom = 7.3)) %>%
+addPolygons(data = Solar_Res_County,
+              label = lapply(labs4, HTML), # hover label
+              color = "grey", # the color of the border
+              fillColor = ~pal4(Solar_Res_County$COUNT), # the colors inside the polygons
+              weight = 1.0, # the thickness of the border lines
+              opacity = 1.0, # the transparency of the border lines
+              fillOpacity = 1.0) %>%
+addLegend(data = Solar_Res_County, # the dataset
+            "bottomright", # where to put the legend
+            pal = pal4, values = ~COUNT, # specify the color palette and the range of values 
+            title = "Quantity", # legend title
+            opacity = 1.0) 
+
+
+map4
+
+```
+
+### Residential Rooftop Solar Adoption Rate by County
+
+```{r}
+pal5 <- colorBin(palette = "Blues", domain = Solar_Res_County$Adoption_Rate, 6)
+labs5 <- as.list(paste(Solar_Res_County$COUNTY,
+                         prettyNum(100*Solar_Res_County$Adoption_Rate,big.mark=",",digits=3)," %"))
+  
+map5 <- leaflet(options = leafletOptions(zoomControl = FALSE,
+                                             dragging = FALSE,
+                                             minZoom = 7.3,
+                                             maxZoom = 7.3)) %>%
+addPolygons(data = Solar_Res_County,
+              label = lapply(labs5, HTML), # hover label
+              color = "grey", # the color of the border
+              fillColor = ~pal5(Solar_Res_County$Adoption_Rate), # the colors inside the polygons
+              weight = 1.0, # the thickness of the border lines
+              opacity = 1.0, # the transparency of the border lines
+              fillOpacity = 1.0) %>%
+addLegend(data = Solar_Res_County, # the dataset
+            "bottomright", # where to put the legend
+            pal = pal5, values = ~Adoption_Rate, # specify the color palette and the range of values
+            title = "Adoption Rate", # legend title
+            opacity = 1.0) 
+
+map5
+
+```
+
+
+Residential Adoption Analysis {.storyboard}
+=========================================
+
+Current Landscape {.sidebar}
+-----------------------------------------------------------------------
+Literature suggests that there exists a significant socio-economic disparity among residential solar adopters.  
+
+Observe in this tab how factors like Income, Race, Housing Value, Housing Ownership, and Third-Party Ownership of solar installations relate to solar adoption rates.  
+
+Every point on the scatter plot represents a zip code in NJ.
+
+Income is represented by the median income for each zip code.  
+
+Race is represented by the proportion of white residents in a zip code.  
+
+Housing Value is represented by the median housing value in a zip code.
+
+Housing Ownership is represented by the proportion of owner-occupied housing units in a zip code.  
+
+Third-Party Ownership is represented by the proportion of rooftop residential solar installations in a zip code that are owned by a third party (other than the resident). Typically, these are companies that install solar on a resident's rooftop for $0 down upfront but with a multi-year lease. This allows a resident to benefit from reduced energy costs, while the company benefits from available incentives and credits. This method of solar adoption has become increasingly popular in recent years. 
+
+
+### Areas with a median household income between $50k - $100k have the highest rate of solar adoption, but those with a higher income are more likely to own their solar installment.  
+
+```{r, }
+fig_income <- plot_ly() %>%
+  add_trace(zip_level_res, x = zip_level_res$`Income`, y = zip_level_res$`Adoption_Rate`, 
+            type = "scatter", 
+            name = "",
+            marker = list(color = zip_level_res$`TPO_FREQ`, 
+                          colorbar = list(title = "TPO Rate"),
+                          colorscale="Viridis")) %>%
+  add_trace(x = income_trend$`x`, y = income_trend$`y`, mode = "lines", 
+            line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Income"),
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
+
+fig_income
+```
+
+***
+
+Research shows that current solar adoption is concentrated in higher-income areas, where early adopters could afford the higher upfront cost of solar installations. As solar installation prices have gone down, solar adoption hasn’t spread to lower-income households despite the tremendous benefits they would get from having cheaper utility bills [[3]](https://www.nature.com/articles/s41560-020-00724-2).
+
+This chart illustrates that solar adoption rates are higher in moderate income areas (\$50k-\$100k) than higher incomes (\$100k+)[[6]](https://www.sunrun.com/solar-by-state/nj/new-jersey-solar-tax-incentives). It is possible that higher adoption rates among moderate incomes residents are motivated by the desire to lower utility bills, which residents of wealthier areas may ignore. There is also a clear pattern illustrating how low-to-moderate income areas are relying on third party ownership models to gain access to solar energy, while higher income areas are more often investing the upfront cost themselves.
+
+
+### Areas with a higher proportion of white residents have a higher rate of solar adoption and are more likely to own their own solar installments. 
+
+
+```{r}
+fig_perc_white <- plot_ly() %>%
+  add_trace(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`Adoption_Rate`, 
+            type = "scatter", 
+            name = "",
+            marker = list(color = zip_level_res$`TPO_FREQ`, 
+                          colorbar = list(title = "TPO Rate"),
+                          colorscale = "Viridis")) %>% 
+  add_trace(x = white_trend$`x`, y = white_trend$`y`, mode = "lines", line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Percent of White Residents"),
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
+
+fig_perc_white
+
+```
+
+***
+
+Research shows that solar adoption has been affected by language barriers [[3]](https://www.nature.com/articles/s41560-020-00724-2). Areas with larger populations of non-English speaking residents may be getting left behind in the transition to solar energy, as information about benefits and incentives may not be reaching them effectively. Solar adoption is influenced by customer referrals and localized installer marketing, therefore it's possible that minorities are being left out of these conversations.
+
+Furthermore, communities of color, regardless of native language, may not be receiving the benefits of renewable energy, while already wealthy white communities absorb the available incentives.
+
+The chart illustrates that solar adoption rates are higher in areas with larger proportions of white residents. 
+
+
+
+### Areas with lower housing value have higher solar adoption and third party ownership rates.
+
+```{r}
+fig_perc_val <- plot_ly() %>%
+add_trace(zip_level_res, x = zip_level_res$`House_Value`, y = zip_level_res$`Adoption_Rate`, 
+          type = "scatter", 
+          name = "",
+          marker = list(color = zip_level_res$`TPO_FREQ`, 
+                        colorbar = list(title = "TPO Rate"),
+                        colorscale = "Viridis")) %>% 
+  add_trace(x = val_trend$`x`, y = val_trend$`y`, mode = "lines", 
+            line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Housing Value"),
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
+
+fig_perc_val
+```
+
+***
+
+In New Jersey, homes with solar panels can sell for 9.9% more than homes without solar installations, an additional $32,281 at median housing value in New Jersey [[4]](https://www.cnbc.com/2019/10/05/solar-power-can-boost-a-homes-value-in-these-10-states-the-most.html#:~:text=In%20New%20Jersey%2C%20homes%20with,valued%20home%20in%20that%20state.). Investing in solar can also help homeowners save on energy costs.
+
+This chart shows that areas with near-median housing value (~\$330,000) are adopting solar at relatively high rates. Investment in solar installations is proving valuable to homeowners, increasing housing value while decreasing energy costs. As expected, areas with higher value homes also see lower rates of third party ownership, typically because these homeowners can afford to pay for their systems up front. 
+
+
+### In areas that have a higher rates of home ownership, there is a higher rate of solar adoption and a higher rate of owning their own solar installment. 
+
+```{r}
+x_sort_own <- sort(zip_level_res$Perc_House_Owned)
+y_sort_own <- zip_level_res$Adoption_Rate[order(zip_level_res$Perc_House_Owned)]
+
+loess_fit_own <- loess(y_sort_own ~ x_sort_own)
+rl_own <- predict(loess_fit_own)
+
+fig_perc_house_owned <- plot_ly() %>%
+  add_trace(zip_level_res, x = zip_level_res$`Perc_House_Owned`, 
+            y = zip_level_res$`Adoption_Rate`, 
+            name = "", 
+            type = "scatter", 
+            marker = list(color = zip_level_res$`TPO_FREQ`, 
+                          colorbar = list(title = "TPO Rate"),
+                          colorscale = "Viridis")) %>% 
+  add_trace(x = own_trend$`x`, y = own_trend$`y`, mode = "lines", 
+            line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Percent of Population That Owns Their House"),
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
+
+fig_perc_house_owned
+```
+
+***
+
+Low and moderate income families are less likely to own the homes they reside in. Investment incentives are very different for homeowners and rental property owners. If tenants pay their own utility bills, rental property owners are not incentivized to invest in solar panel installations to lower energy costs. Renters are typically low and moderate income, and are less likely to have access to the benefits of renewable energy, even though they seek to benefit the most. [[5]](https://www.hammondclimatesolutions.com/blog/overcoming-barriers-to-solar-adoption-in-communities-of-concern).  
+
+In order to address this gap, New Jersey authorized a Community Solar Energy Pilot Program that allows residents to participate in community solar energy projects and benefit from local solar installations, which sell them energy directly at a lower rate. [[1]](https://earthjustice.org/news/press/2018/lawmakers-approve-bill-allowing-nj-renters-apartment-dwellers-to-access-solar-power). 
+
+As expected, the chart illustrates that areas with higher home ownership rates are more likely to install solar. This is driven by socioeconomic factors, difficulty of installing solar in highly urbanized areas, and the lack of incentives for landlords to invest in solar installations.
+
+Sources and References
+=========================================
+
+**Solar power is a large part of New Jersey’s active transition away from using fossil fuel as a source of electricity. Keeping track of statistics related to this transition is important for citizens and lawmakers alike. We built this dashboard to effectively visualize publicly available data on solar adoption in New Jersey in a clear and accessible manner.**
+
+*Data Sources:*  
+
+1.	New Jersey Board of Public Utilities Clean Energy Program, Solar Installations Dataset and Report (December 2021). Retrieved from:  
+https://njcleanenergy.com/renewable-energy/project-activity-reports/solar-activity-report-archive
+2.	U.S. Census Bureau (2019). Selected housing characteristics, 2019 American Community Survey 5-year estimates. Retrieved from U.S. Census API.  
+
+*References:*  
+
+1.	Lawmakers Approve Bill Allowing NJ Renters, Apartment-Dwellers to Access Solar Power. (2018, April 13). Earthjustice. https://earthjustice.org/news/press/2018/lawmakers-approve-bill-allowing-nj-renters-apartment-dwellers-to-access-solar-power  
+
+2.	NJDEP-Air Quality, Energy & Sustainability. (n.d.). Retrieved May 6, 2022, from https://www.nj.gov/dep/aqes/opea-clean-energy.html  
+
+3.	O’Shaughnessy, E., Barbose, G., Wiser, R., Forrester, S., & Darghouth, N. (2021). The impact of policies and business models on income equity in rooftop solar adoption. Nature Energy, 6(1), 84–91. https://doi.org/10.1038/s41560-020-00724-2  
+
+4.	Sanchez, V. (2019, October 5). Solar power can boost your home’s value—Especially in these 10 states. CNBC. https://www.cnbc.com/2019/10/05/solar-power-can-boost-a-homes-value-in-these-10-states-the-most.html  
+
+5.	Solutions for Overcoming Barriers to Solar Adoption in Communities of Concern. (n.d.). Retrieved May 6, 2022, from https://www.hammondclimatesolutions.com/blog/overcoming-barriers-to-solar-adoption-in-communities-of-concern  
+
+6.	Sunrun. (2019, July 29). New Jersey Solar Incentives | NJ Solar Tax Credit [Text]. Sunrun; Sunrun. https://www.sunrun.com/solar-by-state/nj/new-jersey-solar-tax-incentives  
+
+*Download Tables:*  
+
+1.    NJBPU Clean Energy Solar Installations Report: https://docs.google.com/spreadsheets/d/16J_80zkGXTTlYA4jcciEV9pHEhLjb_6d/edit?usp=sharing&ouid=100231236605332853229&rtpof=true&sd=true
+
+2.    Quantity and Capacity by County and Sector: https://docs.google.com/spreadsheets/d/1U7v5m9DA-RoPFU7Ia1a9WlEd_7de4IyO/edit?usp=sharing&ouid=100231236605332853229&rtpof=true&sd=true  
+
+3.    Quantity and Capacity Trends: https://docs.google.com/spreadsheets/d/1iUaEwqmuK6OiJ3fV02AEFJhGou6PTb7o/edit?usp=sharing&ouid=100231236605332853229&rtpof=true&sd=true   
+
+*Source Code:*  
+
+https://github.com/psimran-singh/Data-Visualization-Final-Project  
+
+*Next Steps:*  
+
+We plan on continuing development of this dashboard. We plan to include more information, including additional statistical analysis and deep dives into sectors beyond residential. Given that NJBPU updates their solar installation data every month, we hope to include functionality to automatically update this dashboard along with those updates. Mobile functionality is another long-term goal for this dashboard.
+
+This dashboard was built by Simran Singh and Jessica Cruz-Nagoski.
+
