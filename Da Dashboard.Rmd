@@ -1,11 +1,10 @@
 ---
-title: "Solar Adoption in New Jersey"
+title: "Solar Adoption in NJ"
 output: 
   flexdashboard::flex_dashboard:
     theme: "lumen"
     orientation: rows
-    source_code: "https://github.com/psimran-singh/Data-Visualization-Final-Project"
-    vertical_layout: fill
+    vertical_layout: scroll
 runtime: shiny
 
 ---
@@ -104,19 +103,6 @@ colors2 <- colors %>% select(-County) %>% slice_head(n=1)
 Overall Landscape
 =====================================
 
-Current Landscape {.sidebar}
------------------------------------------------------------------------
-
-Solar energy is playing a significant role in shifting New Jersey's energy economy away from fossil fuels and towards renewables. 
-
-The major sectors of solar energy are Residential, Non-Residential, and Grid Supply.
-
-  -Residential solar energy consists primarily of small (~10kW) net-metered rooftop installations.  
-
-  -Non-Residential, which covers commercial, farm, and government installations, are typically larger (~200kW) net-metered rooftop solar panel installations.  
-
-  -Grid Supply projects, consist of very large (~6600kW) ground-mounted installations.
-
 Row
 -----------------------------------------------------------------------
 
@@ -203,8 +189,21 @@ map2
 
 
 
-Overall Landscape by Sector
+Overall Landscape by Sector 
 =====================================
+
+Current Landscape {.sidebar}
+-----------------------------------------------------------------------
+
+Solar energy is playing a significant role in shifting New Jersey's energy economy away from fossil fuels and towards renewables. This transition is occuring across various sectors of energy consumers.
+
+The major sectors of solar energy are Residential, Non-Residential, and Grid Supply.
+
+  -Residential solar energy consists primarily of small (~10kW) net-metered rooftop installations.  
+
+  -Non-Residential, which covers commercial, farm, and government installations, are typically larger (~200kW) net-metered rooftop solar panel installations.  
+
+  -Grid Supply projects, consist of very large (~6600kW) ground-mounted installations.
 
 Row
 -----------------------------------------------------------------------
@@ -251,7 +250,7 @@ renderValueBox({
 })
 ```
 
-Row 
+Row
 -------------------------------------
 
 ### Total Installed Capacity by Sector and County
@@ -617,9 +616,10 @@ Housing Ownership is represented by the proportion of owner-occupied housing uni
 
 Third-Party Ownership is represented by the proportion of rooftop residential solar installations in a zip code that are owned by a third party (other than the resident). Typically, these are companies that install solar on a resident's rooftop for $0 down upfront but with a multi-year lease. This allows a resident to benefit from reduced energy costs, while the company benefits from available incentives and credits. This method of solar adoption has become increasingly popular in recent years. 
 
-### Areas with a median household income between $50k - $100k have the highest rate of solar adoption, but those with a higher income are more likely to own their solar installment. 
 
-```{r}
+### Areas with a median household income between $50k - $100k have the highest rate of solar adoption, but those with a higher income are more likely to own their solar installment.  
+
+```{r, }
 fig_income <- plot_ly() %>%
   add_trace(zip_level_res, x = zip_level_res$`Income`, y = zip_level_res$`Adoption_Rate`, 
             type = "scatter", 
@@ -639,9 +639,41 @@ fig_income
 
 ***
 
-Research shows that current solar adoption is concentrated in higher-income areas, where early adopters could afford the higher upfront cost of solar installations. As solar installation prices have gone down, solar adoption hasn’t spread to lower-income households despite the tremendous benefits they would get from having cheaper utility bills [[1]](https://www.nature.com/articles/s41560-020-00724-2).
+Research shows that current solar adoption is concentrated in higher-income areas, where early adopters could afford the higher upfront cost of solar installations. As solar installation prices have gone down, solar adoption hasn’t spread to lower-income households despite the tremendous benefits they would get from having cheaper utility bills [[3]](https://www.nature.com/articles/s41560-020-00724-2).
 
-This chart illustrates that solar adoption rates are higher in moderate income areas (\$50k-\$100k) than higher incomes (\$100k+)[[2]](https://www.sunrun.com/solar-by-state/nj/new-jersey-solar-tax-incentives). It is possible that higher adoption rates among moderate incomes residents are motivated by the desire to lower utility bills, which residents of wealthier areas may ignore. There is also a clear pattern illustrating how low-to-moderate income areas are relying on third party ownership models to gain access to solar energy, while higher income areas are more often investing the upfront cost themselves.
+This chart illustrates that solar adoption rates are higher in moderate income areas (\$50k-\$100k) than higher incomes (\$100k+)[[6]](https://www.sunrun.com/solar-by-state/nj/new-jersey-solar-tax-incentives). It is possible that higher adoption rates among moderate incomes residents are motivated by the desire to lower utility bills, which residents of wealthier areas may ignore. There is also a clear pattern illustrating how low-to-moderate income areas are relying on third party ownership models to gain access to solar energy, while higher income areas are more often investing the upfront cost themselves.
+
+
+### Areas with a higher proportion of white residents have a higher rate of solar adoption and are more likely to own their own solar installments. 
+
+
+```{r}
+fig_perc_white <- plot_ly() %>%
+  add_trace(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`Adoption_Rate`, 
+            type = "scatter", 
+            name = "",
+            marker = list(color = zip_level_res$`TPO_FREQ`, 
+                          colorbar = list(title = "TPO Rate"),
+                          colorscale = "Viridis")) %>% 
+  add_trace(x = white_trend$`x`, y = white_trend$`y`, mode = "lines", line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
+  layout(yaxis = list(title = "Solar Adoption Rate"),
+         xaxis = list(title = "Percent of White Residents"),
+         text = list(title = "Using Zip Code Level Data"),
+         showlegend = F)
+
+fig_perc_white
+
+```
+
+***
+
+Research shows that solar adoption has been affected by language barriers [[3]](https://www.nature.com/articles/s41560-020-00724-2). Areas with larger populations of non-English speaking residents may be getting left behind in the transition to solar energy, as information about benefits and incentives may not be reaching them effectively. Solar adoption is influenced by customer referrals and localized installer marketing, therefore it's possible that minorities are being left out of these conversations.
+
+Furthermore, communities of color, regardless of native language, may not be receiving the benefits of renewable energy, while already wealthy white communities absorb the available incentives.
+
+The chart illustrates that solar adoption rates are higher in areas with larger proportions of white residents. 
+
+
 
 ### Areas with lower housing value have higher solar adoption and third party ownership rates.
 
@@ -665,39 +697,9 @@ fig_perc_val
 
 ***
 
-In New Jersey, homes with solar panels can sell for 9.9% more than homes without solar installations, an additional $32,281 at median housing value in New Jersey [[3]](https://www.cnbc.com/2019/10/05/solar-power-can-boost-a-homes-value-in-these-10-states-the-most.html#:~:text=In%20New%20Jersey%2C%20homes%20with,valued%20home%20in%20that%20state.). Investing in solar can also help homeowners save on energy costs.
+In New Jersey, homes with solar panels can sell for 9.9% more than homes without solar installations, an additional $32,281 at median housing value in New Jersey [[4]](https://www.cnbc.com/2019/10/05/solar-power-can-boost-a-homes-value-in-these-10-states-the-most.html#:~:text=In%20New%20Jersey%2C%20homes%20with,valued%20home%20in%20that%20state.). Investing in solar can also help homeowners save on energy costs.
 
 This chart shows that areas with near-median housing value (~\$330,000) are adopting solar at relatively high rates. Investment in solar installations is proving valuable to homeowners, increasing housing value while decreasing energy costs. As expected, areas with higher value homes also see lower rates of third party ownership, typically because these homeowners can afford to pay for their systems up front. 
-
-
-### Areas with a higher percentage of white residents have a higher rate of solar adoption and are more likely to own their own solar installments. 
-
-
-```{r}
-fig_perc_white <- plot_ly() %>%
-  add_trace(zip_level_res, x = zip_level_res$`Perc_White`, y = zip_level_res$`Adoption_Rate`, 
-            type = "scatter", 
-            name = "",
-            marker = list(color = zip_level_res$`TPO_FREQ`, 
-                          colorbar = list(title = "TPO Rate"),
-                          colorscale = "Viridis")) %>% 
-  add_trace(x = white_trend$`x`, y = white_trend$`y`, mode = "lines", line = list(color = 'rgba(67,67,67,1)', width = 2)) %>%
-  layout(yaxis = list(title = "Solar Adoption Rate"),
-         xaxis = list(title = "Percent of White Residents"),
-         text = list(title = "Using Zip Code Level Data"),
-         showlegend = F)
-
-fig_perc_white
-
-```
-
-***
-
-Research shows that solar adoption has been affected by language barriers [[4]](https://www.nature.com/articles/s41560-020-00724-2). Areas with larger populations of non-English speaking residents may be getting left behind in the transition to solar energy, as information about benefits and incentives may not be reaching them effectively. Solar adoption is influenced by customer referrals and localized installer marketing, therefore it's possible that minorities are being left out of these conversations.
-
-Furthermore, communities of color, regardless of native language, may not be receiving the benefits of renewable energy, while already wealthy white communities absorb the available incentives.
-
-The chart illustrates that solar adoption rates are higher in areas with larger proportions of white residents. 
 
 
 ### In areas that have a higher rates of home ownership, there is a higher rate of solar adoption and a higher rate of owning their own solar installment. 
@@ -731,6 +733,50 @@ fig_perc_house_owned
 
 Low and moderate income families are less likely to own the homes they reside in. Investment incentives are very different for homeowners and rental property owners. If tenants pay their own utility bills, rental property owners are not incentivized to invest in solar panel installations to lower energy costs. Renters are typically low and moderate income, and are less likely to have access to the benefits of renewable energy, even though they seek to benefit the most. [[5]](https://www.hammondclimatesolutions.com/blog/overcoming-barriers-to-solar-adoption-in-communities-of-concern).  
 
-In order to address this gap, New Jersey authorized a Community Solar Energy Pilot Program that allows residents to participate in community solar energy projects and benefit from local solar installations, which sell them energy directly at a lower rate. [[6]](https://earthjustice.org/news/press/2018/lawmakers-approve-bill-allowing-nj-renters-apartment-dwellers-to-access-solar-power). 
+In order to address this gap, New Jersey authorized a Community Solar Energy Pilot Program that allows residents to participate in community solar energy projects and benefit from local solar installations, which sell them energy directly at a lower rate. [[1]](https://earthjustice.org/news/press/2018/lawmakers-approve-bill-allowing-nj-renters-apartment-dwellers-to-access-solar-power). 
 
 As expected, the chart illustrates that areas with higher home ownership rates are more likely to install solar. This is driven by socioeconomic factors, difficulty of installing solar in highly urbanized areas, and the lack of incentives for landlords to invest in solar installations.
+
+Sources and References
+=========================================
+
+**Solar power is a large part of New Jersey’s active transition away from using fossil fuel as a source of electricity. Keeping track of statistics related to this transition is important for citizens and lawmakers alike. We built this dashboard to effectively visualize publicly available data on solar adoption in New Jersey in a clear and accessible manner.**
+
+*Data Sources:*  
+
+1.	New Jersey Board of Public Utilities Clean Energy Program, Solar Installations Dataset and Report (December 2021). Retrieved from:  
+https://njcleanenergy.com/renewable-energy/project-activity-reports/solar-activity-report-archive
+2.	U.S. Census Bureau (2019). Selected housing characteristics, 2019 American Community Survey 5-year estimates. Retrieved from U.S. Census API.  
+
+*References:*  
+
+1.	Lawmakers Approve Bill Allowing NJ Renters, Apartment-Dwellers to Access Solar Power. (2018, April 13). Earthjustice. https://earthjustice.org/news/press/2018/lawmakers-approve-bill-allowing-nj-renters-apartment-dwellers-to-access-solar-power  
+
+2.	NJDEP-Air Quality, Energy & Sustainability. (n.d.). Retrieved May 6, 2022, from https://www.nj.gov/dep/aqes/opea-clean-energy.html  
+
+3.	O’Shaughnessy, E., Barbose, G., Wiser, R., Forrester, S., & Darghouth, N. (2021). The impact of policies and business models on income equity in rooftop solar adoption. Nature Energy, 6(1), 84–91. https://doi.org/10.1038/s41560-020-00724-2  
+
+4.	Sanchez, V. (2019, October 5). Solar power can boost your home’s value—Especially in these 10 states. CNBC. https://www.cnbc.com/2019/10/05/solar-power-can-boost-a-homes-value-in-these-10-states-the-most.html  
+
+5.	Solutions for Overcoming Barriers to Solar Adoption in Communities of Concern. (n.d.). Retrieved May 6, 2022, from https://www.hammondclimatesolutions.com/blog/overcoming-barriers-to-solar-adoption-in-communities-of-concern  
+
+6.	Sunrun. (2019, July 29). New Jersey Solar Incentives | NJ Solar Tax Credit [Text]. Sunrun; Sunrun. https://www.sunrun.com/solar-by-state/nj/new-jersey-solar-tax-incentives  
+
+*Download Tables:*  
+
+1.    NJBPU Clean Energy Solar Installations Report: https://docs.google.com/spreadsheets/d/16J_80zkGXTTlYA4jcciEV9pHEhLjb_6d/edit?usp=sharing&ouid=100231236605332853229&rtpof=true&sd=true
+
+2.    Quantity and Capacity by County and Sector: https://docs.google.com/spreadsheets/d/1U7v5m9DA-RoPFU7Ia1a9WlEd_7de4IyO/edit?usp=sharing&ouid=100231236605332853229&rtpof=true&sd=true  
+
+3.    Quantity and Capacity Trends: https://docs.google.com/spreadsheets/d/1iUaEwqmuK6OiJ3fV02AEFJhGou6PTb7o/edit?usp=sharing&ouid=100231236605332853229&rtpof=true&sd=true   
+
+*Source Code:*  
+
+https://github.com/psimran-singh/Data-Visualization-Final-Project  
+
+*Next Steps:*  
+
+We plan on continuing development of this dashboard. We plan to include more information, including additional statistical analysis and deep dives into sectors beyond residential. Given that NJBPU updates their solar installation data every month, we hope to include functionality to automatically update this dashboard along with those updates. Mobile functionality is another long-term goal for this dashboard.
+
+This dashboard was built by Simran Singh and Jessica Cruz-Nagoski.
+
