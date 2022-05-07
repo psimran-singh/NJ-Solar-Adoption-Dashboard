@@ -4,7 +4,6 @@ setwd("~/GitHub/Data-Visualization-Final-Project/Data Files for Analysis")
 #Residential Solar and Census Data Table for Zip Code Level Statistical Analysis
 write.csv(Solar_Res_Zip,"Residential_Solar_ZIP.csv")
 
-#Overall Solar TPO Data by County
 #Residential Trend lines
 write.csv(income_trendline, "Trendline For Income.csv")
 write.csv(own_trendline, "Trendline For House Ownership.csv")
@@ -12,7 +11,7 @@ write.csv(val_trendline, "Trendline For Housing Value.csv")
 write.csv(white_trendline, "Trendline For White Population.csv")
 
 #Residential Solar TPO Data by County
-write.csv(Solar_TPO_County,"Solar_TPO_County.csv")
+#write.csv(Solar_TPO_County,"Solar_TPO_County.csv")
 
 #Saving as R object will preserve geometry, we will use these tables to map
 #Residential Solar by County
